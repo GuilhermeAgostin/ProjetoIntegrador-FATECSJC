@@ -6,12 +6,17 @@ using System.Threading.Tasks;
 using System.IO.Compression;
 using System.IO;
 using ZipFile = System.IO.Compression.ZipFile;
+using System.Data.OleDb;
+using System.Data;
 
 namespace TesteAPI
 {
-    class Program : ArquivoZip
+    class Program : Conversao
     {
         //Para usar a classe ZipFile, você deve fazer referência ao assembly System.IO.Compression.FileSystem em seu projeto.
+        // MAP PATH PESQUISAR - Open file 
+        // Se eu fosse deixar para ler ou criar alguma pasta dentro do disco do cliente, teria que deixar um watch dog o tempo todo
+        // alem disso poderia dar muito erro
         static void Main(string[] args)
         {
 
@@ -24,10 +29,10 @@ namespace TesteAPI
 
             try
             {
-                zip.CriarPasta(path, zipPath);
+                zip.CriarPasta(path);
             }
 
-            catch {}
+            catch { }
 
             Console.WriteLine(Directory.GetFiles(path));
 
@@ -37,12 +42,12 @@ namespace TesteAPI
                 ZipFile.ExtractToDirectory(zipPath, path); //Extrai os arquivos do zip Shape e manda para o diretorio
             }
             catch { }
-            
+
 
             // criar outra pasta para guardar a variavel AREA_IMOVEL
             try
             {
-                zip.CriarPasta(PastaFinal, ZipAreaImovel);
+                zip.CriarPasta(PastaFinal);
             }
 
             catch (Exception e)
@@ -55,8 +60,14 @@ namespace TesteAPI
             {
                 ZipFile.ExtractToDirectory(ZipAreaImovel, PastaFinal); //Extrai os arquivos do zip Shape e manda para o diretorio
             }
-            catch{}
-            
+            catch { }
+
+
+            Conversao conversao = new Conversao();
+            conversao.OpenConnection(constr);
+            Console.ReadKey();
+
+
 
 
 

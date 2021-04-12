@@ -20,10 +20,10 @@ namespace TesteAPI
             throw new NotImplementedException();
         }
 
-        public void CriarPasta(string path, string zipPath)
+        public void CriarPasta(string path)
         {
             //metodo para criar pasta direto no disco local (C)
-           
+
 
             // verifica se a pasta existe
             if (Directory.Exists(path))
