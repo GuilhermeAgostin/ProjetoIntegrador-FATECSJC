@@ -23,19 +23,16 @@ namespace TesteAPI
         public void CriarPasta(string path)
         {
             //metodo para criar pasta direto no disco local (C)
-
-
             // verifica se a pasta existe
             if (Directory.Exists(path))
             {
-                Console.WriteLine("That path exists already.");
-                //return; // se eu der return ele fecharia o código, sabendo que já existe uma pasta com esse nome
+                
             }
             else
             {
                 // Tenta criar a pasta
                 DirectoryInfo DiretorioTeste = Directory.CreateDirectory(path);
-                Console.WriteLine("The directory was created successfully at {0}.", Directory.GetCreationTime(path));
+                Console.WriteLine("A pasta foi criada com sucesso as {0}.", Directory.GetCreationTime(path));
             }
         }
 

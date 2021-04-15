@@ -1,0 +1,10 @@
+C:\Users\Agostin\Desktop\APIFATECForms\bin\Debug\APIFATECForms.exe.config
+C:\Users\Agostin\Desktop\APIFATECForms\bin\Debug\APIFATECForms.exe
+C:\Users\Agostin\Desktop\APIFATECForms\bin\Debug\APIFATECForms.pdb
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.csprojAssemblyReference.cache
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.Form1.resources
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.Properties.Resources.resources
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.csproj.GenerateResource.cache
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.csproj.CoreCompileInputs.cache
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.exe
+C:\Users\Agostin\Desktop\APIFATECForms\obj\Debug\APIFATECForms.pdb

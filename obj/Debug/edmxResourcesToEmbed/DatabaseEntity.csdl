@@ -7,6 +7,7 @@
     <Key>
       <PropertyRef Name="cod_imovel" />
     </Key>
+    <Property Name="cod_imovel" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
     <Property Name="num_area" Type="Decimal" Precision="18" Scale="10" />
     <Property Name="cod_estado" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
     <Property Name="nom_munici" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
@@ -14,6 +15,5 @@
     <Property Name="tipo_imove" Type="String" MaxLength="3" FixedLength="true" Unicode="false" />
     <Property Name="situacao" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
     <Property Name="condicao_i" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-    <Property Name="cod_imovel" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
   </EntityType>
 </Schema>

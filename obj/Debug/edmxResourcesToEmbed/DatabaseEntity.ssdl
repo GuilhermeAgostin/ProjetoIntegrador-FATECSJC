@@ -4,6 +4,7 @@
     <Key>
       <PropertyRef Name="cod_imovel" />
     </Key>
+    <Property Name="cod_imovel" Type="varchar" MaxLength="45" Nullable="false" />
     <Property Name="num_area" Type="decimal" Precision="18" Scale="10" />
     <Property Name="cod_estado" Type="char" MaxLength="2" />
     <Property Name="nom_munici" Type="varchar" MaxLength="30" />
@@ -11,7 +12,6 @@
     <Property Name="tipo_imove" Type="char" MaxLength="3" />
     <Property Name="situacao" Type="char" MaxLength="2" />
     <Property Name="condicao_i" Type="varchar" MaxLength="50" />
-    <Property Name="cod_imovel" Type="varchar" MaxLength="45" Nullable="false" />
   </EntityType>
   <EntityContainer Name="APIFATECModelStoreContainer">
     <EntitySet Name="AREA_IMOVEL" EntityType="Self.AREA_IMOVEL" Schema="dbo" store:Type="Tables" />

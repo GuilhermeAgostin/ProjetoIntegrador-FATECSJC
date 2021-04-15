@@ -4,7 +4,6 @@
     <EntitySetMapping Name="AREA_IMOVEL">
       <EntityTypeMapping TypeName="APIFATECModel.AREA_IMOVEL">
         <MappingFragment StoreEntitySet="AREA_IMOVEL">
-          <ScalarProperty Name="cod_imovel" ColumnName="cod_imovel" />
           <ScalarProperty Name="condicao_i" ColumnName="condicao_i" />
           <ScalarProperty Name="situacao" ColumnName="situacao" />
           <ScalarProperty Name="tipo_imove" ColumnName="tipo_imove" />
@@ -12,6 +11,7 @@
           <ScalarProperty Name="nom_munici" ColumnName="nom_munici" />
           <ScalarProperty Name="cod_estado" ColumnName="cod_estado" />
           <ScalarProperty Name="num_area" ColumnName="num_area" />
+          <ScalarProperty Name="cod_imovel" ColumnName="cod_imovel" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

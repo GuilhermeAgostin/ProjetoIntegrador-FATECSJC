@@ -19,7 +19,22 @@ namespace TesteAPI
 
         public static string dbfFileName = @"C:\Teste\VariavelImportante\AREA_IMOVEL.dbf";
         public static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
-        public static string ExcelFileName = @"C:\Teste\VariavelImportante\" + "arquivo_convertido"; 
+        public static string ExcelFileName = @"C:\Teste\VariavelImportante\" + "arquivo_convertido";
+
+        string[] CaracterEspecial = new string[] { "Aguardando anÃ¡lise", "Aguardando analise" };
+        string StrCaraterEspecial = "Aguardando análise";
+
+        public string ReplaceCaracter(string Caracter)
+        {
+            //Caracter = Caracter.Replace(CaracterEspecial, StrCaraterEspecial);
+
+            for (int i = 0; i < CaracterEspecial.Length; i++)
+            {
+                Caracter = Caracter.Replace(CaracterEspecial[i], StrCaraterEspecial);
+            }
+            return Caracter;
+        }
+
 
         public void OpenConnection(string connectionString)
         {
@@ -30,15 +45,13 @@ namespace TesteAPI
                 try
                 {
                     connection.Open();
-                    Console.WriteLine("ServerVersion: {0} \nDataSource: {1}",
-                        connection.ServerVersion, connection.DataSource);
+                    Console.WriteLine("\nServerVersion: {0} \nDataSource: {1}",
+                    connection.ServerVersion, connection.DataSource);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
                 }
-                // The connection is automatically closed when the
-                // code exits the using block.
 
                 var sql = "select * from " + Path.GetFileName(dbfFileName) + ";";
                 OleDbCommand cmd = new OleDbCommand(sql, connection);
@@ -47,36 +60,29 @@ namespace TesteAPI
                 if (connection.State == ConnectionState.Open)
                 {
                     OleDbDataAdapter da = new OleDbDataAdapter(cmd);
-                    Console.Write("Reading database...  ");
+                    Console.Write("Lendo banco de dados...  ");
                     da.Fill(dt);
-                    Console.WriteLine("Completed.");
+                    Console.WriteLine("Leitura completa.");
                 }
-
-                
 
                 if (dt != null && dt.Rows.Count > 0)
                 {
-                    
-
                     GenerateExcel(dt, ExcelFileName);
                 }
 
                 OleDbDataReader dr = cmd.ExecuteReader();
 
-                
-
                 while (dr.Read())
                 {
                     string cod_imovel = dr[0].ToString().Trim();// .trim para tirar os white spaces
                     string num_area = dr[1].ToString().Trim();
+
                     string cod_estado = dr[2].ToString().Trim();
                     string nom_munici = dr[3].ToString().Trim();
                     string num_modulo = dr[4].ToString().Trim();
                     string tipo_imove = dr[5].ToString().Trim();
                     string situacao = dr[6].ToString().Trim();
-                    string condicao_i = dr[7].ToString().Trim();
-
-                    //Console.WriteLine(dr[0].ToString());
+                    string condicao_i = ReplaceCaracter(dr[7].ToString()).Trim();
 
                     decimal NUM_AREA = decimal.Parse(num_area);
                     decimal NUM_MODULO = decimal.Parse(num_modulo);
@@ -92,9 +98,9 @@ namespace TesteAPI
                         situacao = situacao,
                         tipo_imove = tipo_imove
                     };
-
                     db.AREA_IMOVEL.Add(area);
                     db.SaveChanges();
+
 
                     // lembrar de adicionar o data_cadastro na tabela para ter um versionamento
                     // dentro da tabela area_imovel eu consigo fazer uma busca por municipio e retornar o por municpio e ate por estado
@@ -106,7 +112,10 @@ namespace TesteAPI
                     {
                         connection.Close();
                     }
-                    catch { }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                 }
 
             }
@@ -114,8 +123,8 @@ namespace TesteAPI
 
         public void GenerateExcel(DataTable sourceDataTable, string ExcelFileName)
         {
-            // para rodar precisei adicionar referencia a lib objetos do Microsoft Excel 12.0 Object
-            Console.Write("Generating Excel File...");
+            // para utilizar essa lib precisei adicionar referencia a lib objetos do Microsoft Excel 12.0 Object
+            Console.Write("Gerando arquivo Excel...");
             Microsoft.Office.Interop.Excel.Application excelApp = new Microsoft.Office.Interop.Excel.Application();
             Microsoft.Office.Interop.Excel.Workbook wkb = excelApp.Workbooks.Add(mv);
             Microsoft.Office.Interop.Excel.Worksheet wks = wkb.Sheets[1];
@@ -139,39 +148,26 @@ namespace TesteAPI
             }
 
              ((Microsoft.Office.Interop.Excel.Range)wks.get_Range((object)wks.Cells[2, 1], (object)wks.Cells[sourceDataTable.Rows.Count, sourceDataTable.Columns.Count])).Value2 = sourceDataTableObjectArray;
-
             header.EntireColumn.AutoFit();
-
             header.Font.Bold = true;
-
             wks.Application.ActiveWindow.SplitRow = 1;
-
             wks.Application.ActiveWindow.FreezePanes = true;
 
             try
             {
                 wks.SaveAs(ExcelFileName, FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlOpenXMLWorkbook);
-
                 wks = null;
-
                 wkb = null;
-
                 excelApp.Quit();
-
-                Console.WriteLine("Completed.");
+                Console.WriteLine(" Gerado com sucesso.");
             }
 
             catch
             {
-                Console.WriteLine("\nO arquivo já foi convertido");
+                Console.WriteLine(" O arquivo já foi convertido.");
             }
 
-
         }
-
-
-
-
 
 
     }

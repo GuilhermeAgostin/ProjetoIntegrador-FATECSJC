@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // As informações gerais sobre um assembly são controladas por
 // conjunto de atributos. Altere estes valores de atributo para modificar as informações
 // associadas a um assembly.
-[assembly: AssemblyTitle("TesteAPI")]
+[assembly: AssemblyTitle("APIFATECForms")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TesteAPI")]
+[assembly: AssemblyProduct("APIFATECForms")]
 [assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // O GUID a seguir será destinado à ID de typelib se este projeto for exposto para COM
-[assembly: Guid("dd779831-f978-4c40-8bd0-1873e2f8be6c")]
+[assembly: Guid("9b81588d-4011-42ab-a63a-08d045c3628c")]
 
 // As informações da versão de um assembly consistem nos quatro valores a seguir:
 //
