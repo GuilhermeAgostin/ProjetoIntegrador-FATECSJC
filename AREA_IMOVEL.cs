@@ -14,7 +14,6 @@ namespace TesteAPI
     
     public partial class AREA_IMOVEL
     {
-        public string cod_imovel { get; set; }
         public Nullable<decimal> num_area { get; set; }
         public string cod_estado { get; set; }
         public string nom_munici { get; set; }
@@ -22,5 +21,6 @@ namespace TesteAPI
         public string tipo_imove { get; set; }
         public string situacao { get; set; }
         public string condicao_i { get; set; }
+        public string cod_imovel { get; set; }
     }
 }
