@@ -1,7 +1,7 @@
 ﻿
 namespace APIFATECForms
 {
-    partial class JavaPastry
+    partial class Form1
     {
         /// <summary>
         /// Variável de designer necessária.
@@ -29,118 +29,296 @@ namespace APIFATECForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.btnBuscar = new System.Windows.Forms.Button();
             this.txtNomeArquivo = new System.Windows.Forms.TextBox();
-            this.lblPrint = new System.Windows.Forms.Label();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.listView1 = new System.Windows.Forms.ListView();
-            this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.imgLabel = new System.Windows.Forms.Label();
             this.labelImgSearch = new System.Windows.Forms.Label();
-            this.cbSelecionarTipoArquivo = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.ArquivoSelecionado = new System.Windows.Forms.Label();
+            this.sfMap1 = new EGIS.Controls.SFMap();
+            this.LabelBaseDeDados = new System.Windows.Forms.Label();
+            this.txtArquivoPExtrair = new System.Windows.Forms.TextBox();
+            this.LabelRegiaoNorte = new System.Windows.Forms.Label();
+            this.LabelRegiaoNordeste = new System.Windows.Forms.Label();
+            this.LabelRegiaoCentroOeste = new System.Windows.Forms.Label();
+            this.LabelRegiaoSudeste = new System.Windows.Forms.Label();
+            this.LabelRegiaoSul = new System.Windows.Forms.Label();
+            this.ImgCenter = new System.Windows.Forms.PictureBox();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.ImgPastaFechada = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.ImgZoomOut = new System.Windows.Forms.PictureBox();
+            this.ImgZoomIn = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgCenter)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgPastaFechada)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgZoomOut)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgZoomIn)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBuscar
             // 
-            this.btnBuscar.Location = new System.Drawing.Point(516, 388);
+            this.btnBuscar.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuscar.ForeColor = System.Drawing.Color.Black;
+            this.btnBuscar.Location = new System.Drawing.Point(633, 9);
+            this.btnBuscar.Margin = new System.Windows.Forms.Padding(4);
             this.btnBuscar.Name = "btnBuscar";
-            this.btnBuscar.Size = new System.Drawing.Size(75, 23);
+            this.btnBuscar.Size = new System.Drawing.Size(100, 30);
             this.btnBuscar.TabIndex = 0;
-            this.btnBuscar.Text = "...";
+            this.btnBuscar.Text = "Buscar";
             this.btnBuscar.UseVisualStyleBackColor = true;
-            this.btnBuscar.Click += new System.EventHandler(this.btnBuscaClick);
+            this.btnBuscar.Click += new System.EventHandler(this.btnBuscarClick);
             // 
             // txtNomeArquivo
             // 
-            this.txtNomeArquivo.Location = new System.Drawing.Point(207, 425);
+            this.txtNomeArquivo.Location = new System.Drawing.Point(372, 578);
+            this.txtNomeArquivo.Margin = new System.Windows.Forms.Padding(4);
             this.txtNomeArquivo.Name = "txtNomeArquivo";
             this.txtNomeArquivo.ReadOnly = true;
-            this.txtNomeArquivo.Size = new System.Drawing.Size(418, 20);
+            this.txtNomeArquivo.Size = new System.Drawing.Size(548, 23);
             this.txtNomeArquivo.TabIndex = 4;
-            // 
-            // lblPrint
-            // 
-            this.lblPrint.AutoSize = true;
-            this.lblPrint.Location = new System.Drawing.Point(301, 355);
-            this.lblPrint.Name = "lblPrint";
-            this.lblPrint.Size = new System.Drawing.Size(208, 13);
-            this.lblPrint.TabIndex = 6;
-            this.lblPrint.Text = "                                                                   ";
-            this.lblPrint.Click += new System.EventHandler(this.label3_Click);
-            // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // listView1
-            // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(15, 12);
-            this.listView1.MultiSelect = false;
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(756, 372);
-            this.listView1.TabIndex = 7;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.SelectedIndexChanged += new System.EventHandler(this.listView1_SelectedIndexChanged);
             // 
             // imgLabel
             // 
             this.imgLabel.AutoSize = true;
-            this.imgLabel.Location = new System.Drawing.Point(21, 396);
+            this.imgLabel.Location = new System.Drawing.Point(28, 518);
+            this.imgLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.imgLabel.Name = "imgLabel";
-            this.imgLabel.Size = new System.Drawing.Size(0, 13);
+            this.imgLabel.Size = new System.Drawing.Size(0, 17);
             this.imgLabel.TabIndex = 9;
             // 
             // labelImgSearch
             // 
             this.labelImgSearch.AutoSize = true;
-            this.labelImgSearch.Location = new System.Drawing.Point(265, 390);
+            this.labelImgSearch.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.labelImgSearch.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.labelImgSearch.Location = new System.Drawing.Point(223, 9);
+            this.labelImgSearch.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelImgSearch.Name = "labelImgSearch";
-            this.labelImgSearch.Size = new System.Drawing.Size(29, 13);
+            this.labelImgSearch.Size = new System.Drawing.Size(33, 17);
             this.labelImgSearch.TabIndex = 11;
-            this.labelImgSearch.Text = "label";
+            this.labelImgSearch.Text = "Img";
+            this.labelImgSearch.Click += new System.EventHandler(this.labelImgSearch_Click);
             // 
-            // cbSelecionarTipoArquivo
+            // ArquivoSelecionado
             // 
-            this.cbSelecionarTipoArquivo.FormattingEnabled = true;
-            this.cbSelecionarTipoArquivo.Location = new System.Drawing.Point(300, 390);
-            this.cbSelecionarTipoArquivo.Name = "cbSelecionarTipoArquivo";
-            this.cbSelecionarTipoArquivo.Size = new System.Drawing.Size(210, 21);
-            this.cbSelecionarTipoArquivo.TabIndex = 12;
-            this.cbSelecionarTipoArquivo.Text = "Escolha um tipo de arquivo...";
-            this.cbSelecionarTipoArquivo.Click += new System.EventHandler(this.cbSelecionarTipoArquivo_Click);
-            this.cbSelecionarTipoArquivo.KeyDown += new System.Windows.Forms.KeyEventHandler(this.cbSelecionarTipoArquivo_KeyDown);
+            this.ArquivoSelecionado.AutoSize = true;
+            this.ArquivoSelecionado.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ArquivoSelecionado.ForeColor = System.Drawing.Color.Black;
+            this.ArquivoSelecionado.Location = new System.Drawing.Point(210, 578);
+            this.ArquivoSelecionado.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.ArquivoSelecionado.Name = "ArquivoSelecionado";
+            this.ArquivoSelecionado.Size = new System.Drawing.Size(154, 19);
+            this.ArquivoSelecionado.TabIndex = 13;
+            this.ArquivoSelecionado.Text = "Arquivo selecionado:";
             // 
-            // label1
+            // sfMap1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(98, 428);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(106, 13);
-            this.label1.TabIndex = 13;
-            this.label1.Text = "Arquivo selecionado:";
+            this.sfMap1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.sfMap1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.sfMap1.CentrePoint2D = ((EGIS.ShapeFileLib.PointD)(resources.GetObject("sfMap1.CentrePoint2D")));
+            this.sfMap1.Cursor = System.Windows.Forms.Cursors.Cross;
+            this.sfMap1.DefaultMapCursor = System.Windows.Forms.Cursors.Cross;
+            this.sfMap1.DefaultSelectionCursor = System.Windows.Forms.Cursors.Cross;
+            this.sfMap1.Font = new System.Drawing.Font("Tw Cen MT", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sfMap1.Location = new System.Drawing.Point(214, 50);
+            this.sfMap1.MapBackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.sfMap1.Margin = new System.Windows.Forms.Padding(4);
+            this.sfMap1.Name = "sfMap1";
+            this.sfMap1.PanSelectMode = EGIS.Controls.PanSelectMode.Pan;
+            this.sfMap1.RenderQuality = EGIS.ShapeFileLib.RenderQuality.High;
+            this.sfMap1.Size = new System.Drawing.Size(706, 520);
+            this.sfMap1.TabIndex = 18;
+            this.sfMap1.UseMemoryStreams = false;
+            this.sfMap1.UseMercatorProjection = false;
+            this.sfMap1.ZoomLevel = 1D;
+            this.sfMap1.ZoomToSelectedExtentWhenCtrlKeydown = false;
+            this.sfMap1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.sfMap1_MouseClick);
             // 
-            // JavaPastry
+            // LabelBaseDeDados
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.LabelBaseDeDados.AutoSize = true;
+            this.LabelBaseDeDados.Font = new System.Drawing.Font("Century Gothic", 10F);
+            this.LabelBaseDeDados.Location = new System.Drawing.Point(54, 156);
+            this.LabelBaseDeDados.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.LabelBaseDeDados.Name = "LabelBaseDeDados";
+            this.LabelBaseDeDados.Size = new System.Drawing.Size(112, 19);
+            this.LabelBaseDeDados.TabIndex = 20;
+            this.LabelBaseDeDados.Text = "Base de Dados";
+            this.LabelBaseDeDados.Click += new System.EventHandler(this.BaseDeDadosClick);
+            // 
+            // txtArquivoPExtrair
+            // 
+            this.txtArquivoPExtrair.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtArquivoPExtrair.Location = new System.Drawing.Point(254, 12);
+            this.txtArquivoPExtrair.Name = "txtArquivoPExtrair";
+            this.txtArquivoPExtrair.Size = new System.Drawing.Size(372, 24);
+            this.txtArquivoPExtrair.TabIndex = 21;
+            this.txtArquivoPExtrair.Text = " Digite o nome do arquivo que deseja extrair...";
+            this.txtArquivoPExtrair.Click += new System.EventHandler(this.txtArquivoPExtrairClick);
+            this.txtArquivoPExtrair.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtArquivoPExtrairKeyDown);
+            // 
+            // LabelRegiaoNorte
+            // 
+            this.LabelRegiaoNorte.AutoSize = true;
+            this.LabelRegiaoNorte.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelRegiaoNorte.Location = new System.Drawing.Point(54, 185);
+            this.LabelRegiaoNorte.Name = "LabelRegiaoNorte";
+            this.LabelRegiaoNorte.Size = new System.Drawing.Size(99, 19);
+            this.LabelRegiaoNorte.TabIndex = 22;
+            this.LabelRegiaoNorte.Text = "Região Norte";
+            this.LabelRegiaoNorte.Visible = false;
+            this.LabelRegiaoNorte.Click += new System.EventHandler(this.RegiaoNorte_Click);
+            // 
+            // LabelRegiaoNordeste
+            // 
+            this.LabelRegiaoNordeste.AutoSize = true;
+            this.LabelRegiaoNordeste.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelRegiaoNordeste.Location = new System.Drawing.Point(54, 212);
+            this.LabelRegiaoNordeste.Name = "LabelRegiaoNordeste";
+            this.LabelRegiaoNordeste.Size = new System.Drawing.Size(123, 19);
+            this.LabelRegiaoNordeste.TabIndex = 23;
+            this.LabelRegiaoNordeste.Text = "Região Nordeste";
+            this.LabelRegiaoNordeste.Visible = false;
+            this.LabelRegiaoNordeste.Click += new System.EventHandler(this.RegiaoNordeste_Click);
+            // 
+            // LabelRegiaoCentroOeste
+            // 
+            this.LabelRegiaoCentroOeste.AutoSize = true;
+            this.LabelRegiaoCentroOeste.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelRegiaoCentroOeste.Location = new System.Drawing.Point(54, 238);
+            this.LabelRegiaoCentroOeste.Name = "LabelRegiaoCentroOeste";
+            this.LabelRegiaoCentroOeste.Size = new System.Drawing.Size(154, 19);
+            this.LabelRegiaoCentroOeste.TabIndex = 24;
+            this.LabelRegiaoCentroOeste.Text = "Região Centro-Oeste";
+            this.LabelRegiaoCentroOeste.Visible = false;
+            this.LabelRegiaoCentroOeste.Click += new System.EventHandler(this.RegiaoCentroOeste_Click);
+            // 
+            // LabelRegiaoSudeste
+            // 
+            this.LabelRegiaoSudeste.AutoSize = true;
+            this.LabelRegiaoSudeste.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelRegiaoSudeste.Location = new System.Drawing.Point(54, 264);
+            this.LabelRegiaoSudeste.Name = "LabelRegiaoSudeste";
+            this.LabelRegiaoSudeste.Size = new System.Drawing.Size(116, 19);
+            this.LabelRegiaoSudeste.TabIndex = 25;
+            this.LabelRegiaoSudeste.Text = "Região Sudeste";
+            this.LabelRegiaoSudeste.Visible = false;
+            this.LabelRegiaoSudeste.Click += new System.EventHandler(this.RegiaoSudeste_Click);
+            // 
+            // LabelRegiaoSul
+            // 
+            this.LabelRegiaoSul.AutoSize = true;
+            this.LabelRegiaoSul.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LabelRegiaoSul.Location = new System.Drawing.Point(54, 290);
+            this.LabelRegiaoSul.Name = "LabelRegiaoSul";
+            this.LabelRegiaoSul.Size = new System.Drawing.Size(81, 19);
+            this.LabelRegiaoSul.TabIndex = 26;
+            this.LabelRegiaoSul.Text = "Região Sul";
+            this.LabelRegiaoSul.Visible = false;
+            this.LabelRegiaoSul.Click += new System.EventHandler(this.LabelRegiaoSul_Click);
+            // 
+            // ImgCenter
+            // 
+            this.ImgCenter.Image = ((System.Drawing.Image)(resources.GetObject("ImgCenter.Image")));
+            this.ImgCenter.Location = new System.Drawing.Point(750, 9);
+            this.ImgCenter.Name = "ImgCenter";
+            this.ImgCenter.Size = new System.Drawing.Size(32, 31);
+            this.ImgCenter.TabIndex = 28;
+            this.ImgCenter.TabStop = false;
+            this.ImgCenter.Click += new System.EventHandler(this.ImgCenter_Click);
+            this.ImgCenter.MouseEnter += new System.EventHandler(this.ImgCenter_MouseEnter);
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
+            this.pictureBox2.Location = new System.Drawing.Point(831, 482);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(71, 72);
+            this.pictureBox2.TabIndex = 27;
+            this.pictureBox2.TabStop = false;
+            // 
+            // ImgPastaFechada
+            // 
+            this.ImgPastaFechada.Image = ((System.Drawing.Image)(resources.GetObject("ImgPastaFechada.Image")));
+            this.ImgPastaFechada.Location = new System.Drawing.Point(12, 148);
+            this.ImgPastaFechada.Name = "ImgPastaFechada";
+            this.ImgPastaFechada.Size = new System.Drawing.Size(45, 34);
+            this.ImgPastaFechada.TabIndex = 19;
+            this.ImgPastaFechada.TabStop = false;
+            this.ImgPastaFechada.Click += new System.EventHandler(this.ImgPastaFechadaClick);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(22, 12);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(158, 130);
+            this.pictureBox1.TabIndex = 15;
+            this.pictureBox1.TabStop = false;
+            // 
+            // ImgZoomOut
+            // 
+            this.ImgZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ImgZoomOut.Image")));
+            this.ImgZoomOut.Location = new System.Drawing.Point(879, 9);
+            this.ImgZoomOut.Name = "ImgZoomOut";
+            this.ImgZoomOut.Size = new System.Drawing.Size(32, 31);
+            this.ImgZoomOut.TabIndex = 30;
+            this.ImgZoomOut.TabStop = false;
+            this.ImgZoomOut.MouseEnter += new System.EventHandler(this.ImgZoomOut_MouseEnter);
+            // 
+            // ImgZoomIn
+            // 
+            this.ImgZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("ImgZoomIn.Image")));
+            this.ImgZoomIn.Location = new System.Drawing.Point(813, 9);
+            this.ImgZoomIn.Name = "ImgZoomIn";
+            this.ImgZoomIn.Size = new System.Drawing.Size(32, 31);
+            this.ImgZoomIn.TabIndex = 31;
+            this.ImgZoomIn.TabStop = false;
+            this.ImgZoomIn.MouseEnter += new System.EventHandler(this.ImgZoomIn_MouseEnter);
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(784, 461);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.cbSelecionarTipoArquivo);
+            this.BackColor = System.Drawing.SystemColors.ScrollBar;
+            this.ClientSize = new System.Drawing.Size(941, 667);
+            this.Controls.Add(this.ImgZoomIn);
+            this.Controls.Add(this.ImgZoomOut);
+            this.Controls.Add(this.ImgCenter);
+            this.Controls.Add(this.pictureBox2);
+            this.Controls.Add(this.LabelRegiaoSul);
+            this.Controls.Add(this.LabelRegiaoSudeste);
+            this.Controls.Add(this.LabelRegiaoCentroOeste);
+            this.Controls.Add(this.LabelRegiaoNordeste);
+            this.Controls.Add(this.LabelRegiaoNorte);
+            this.Controls.Add(this.txtArquivoPExtrair);
+            this.Controls.Add(this.LabelBaseDeDados);
+            this.Controls.Add(this.ImgPastaFechada);
+            this.Controls.Add(this.sfMap1);
+            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.ArquivoSelecionado);
             this.Controls.Add(this.labelImgSearch);
             this.Controls.Add(this.imgLabel);
-            this.Controls.Add(this.listView1);
-            this.Controls.Add(this.lblPrint);
             this.Controls.Add(this.txtNomeArquivo);
             this.Controls.Add(this.btnBuscar);
-            this.Name = "JavaPastry";
+            this.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "JavaPastry";
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.Click += new System.EventHandler(this.Form1_Click);
+            ((System.ComponentModel.ISupportInitialize)(this.ImgCenter)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgPastaFechada)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgZoomOut)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ImgZoomIn)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -150,14 +328,23 @@ namespace APIFATECForms
 
         private System.Windows.Forms.Button btnBuscar;
         private System.Windows.Forms.TextBox txtNomeArquivo;
-        private System.Windows.Forms.Label lblPrint;
-        private System.Windows.Forms.ImageList imageList1;
-        private System.Windows.Forms.ListView listView1;
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.Label imgLabel;
         private System.Windows.Forms.Label labelImgSearch;
-        private System.Windows.Forms.ComboBox cbSelecionarTipoArquivo;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label ArquivoSelecionado;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox ImgPastaFechada;
+        private System.Windows.Forms.Label LabelBaseDeDados;
+        private System.Windows.Forms.TextBox txtArquivoPExtrair;
+        private System.Windows.Forms.Label LabelRegiaoNorte;
+        private System.Windows.Forms.Label LabelRegiaoNordeste;
+        private System.Windows.Forms.Label LabelRegiaoCentroOeste;
+        private System.Windows.Forms.Label LabelRegiaoSudeste;
+        private System.Windows.Forms.Label LabelRegiaoSul;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private EGIS.Controls.SFMap sfMap1;
+        private System.Windows.Forms.PictureBox ImgCenter;
+        private System.Windows.Forms.PictureBox ImgZoomOut;
+        private System.Windows.Forms.PictureBox ImgZoomIn;
     }
 }
 

@@ -5,15 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO.Compression;
+using System.Data;
 
 namespace APIFATECForms
 {
-    class Arquivo
+    class Arquivo : ConexaoDados
     {
-        
+
 
         public void CriarPasta(string Pasta)
-        {        
+        {
             // seu eu criar um metodo que ja inicializa criando todas as pastas ficaria dificil pra conseguir extrair tudo
             if (Directory.Exists(Pasta))
             {
@@ -30,22 +31,13 @@ namespace APIFATECForms
             ZipFile.ExtractToDirectory(zipPath, extractPath);
         }
 
-        public void DeletarArquivos()
+        public void DeletarArquivos(string pasta)
         {
-            if (System.IO.File.Exists(@"C:\Users\Public\DeleteTest\test.txt"))
+            System.IO.DirectoryInfo di = new DirectoryInfo(pasta);
+
+            foreach (FileInfo file in di.GetFiles())
             {
-                // Use a try block to catch IOExceptions, to
-                // handle the case of the file already being
-                // opened by another process.
-                try
-                {
-                    System.IO.File.Delete(@"C:\Users\Public\DeleteTest\test.txt");
-                }
-                catch (System.IO.IOException e)
-                {
-                    Console.WriteLine(e.Message);
-                    return;
-                }
+                file.Delete();
             }
         }
 
@@ -55,17 +47,33 @@ namespace APIFATECForms
 
             foreach (FileInfo file in di.GetFiles())
             {
-                if(file.Extension == ".zip")
+                if (file.Extension == ".zip")
                 {
                     file.Delete();
                 }
-                
+
             }
-          
+
         }
 
+        public void VerificaSeExistePastaX(DataTable sourceDataTable, string ExcelFileName)
+        {
+            string excelfileName  = ExcelFileName + ".xlsx";
 
-       
+            if (File.Exists(excelfileName) == true)
+            {
+                Console.WriteLine("Já existe esse arquivo");
+            }
+            else
+            {
+                GenerateExcel(sourceDataTable, ExcelFileName);
+            }
+        }
+
+        
+
+
+
 
     }
 }

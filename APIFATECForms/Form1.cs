@@ -1,84 +1,74 @@
-﻿using System;
+﻿using EGIS.ShapeFileLib;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OleDb;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Timer = System.Threading.Timer;
 
 namespace APIFATECForms
 {
-    public partial class JavaPastry : Form
+    public partial class Form1 : Form
     {
-        static string PastaDaAplicacao = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
-        static string BasePath = Path.Combine(PastaDaAplicacao, "BasePath");
-        static string APP = Path.Combine(BasePath, "APP");
-        static string AREA_ALTITUDE_SUPERIOR_1800 = Path.Combine(BasePath, "AREA_ALTITUDE_SUPERIOR_1800");
-        static string AREA_CONSOLIDADA = Path.Combine(BasePath, "AREA_CONSOLIDADA");
-        static string AREA_DECLIVIDADE_MAIOR_45 = Path.Combine(BasePath, "AREA_DECLIVIDADE_MAIOR_45");
-        static string AREA_IMOVEL = Path.Combine(BasePath, "AREA_IMOVEL");
-        static string AREA_POUSIO = Path.Combine(BasePath, "AREA_POUSIO");
-        static string AREA_TOPO_MORRO = Path.Combine(BasePath, "AREA_TOPO_MORRO");
-        static string BANHADO = Path.Combine(BasePath, "BANHADO");
-        static string BORDA_CHAPADA = Path.Combine(BasePath, "BORDA_CHAPADA");
-        static string HIDROGRAFIA = Path.Combine(BasePath, "HIDROGRAFIA");
-        static string MANGUEZAL = Path.Combine(BasePath, "MANGUEZAL");
-        static string NASCENTE_OLHO_DAGUA = Path.Combine(BasePath, "NASCENTE_OLHO_DAGUA");
-        static string RESERVA_LEGAL = Path.Combine(BasePath, "RESERVA_LEGAL");
-        static string RESTINGA = Path.Combine(BasePath, "RESTINGA");
-        static string SERVIDAO_ADMINISTRATIVA = Path.Combine(BasePath, "SERVIDAO_ADMINISTRATIVA");
-        static string USO_RESTRITO = Path.Combine(BasePath, "USO_RESTRITO");
-        static string VEGETACAO_NATIVA = Path.Combine(BasePath, "VEGETACAO_NATIVA");
-        static string VEREDA = Path.Combine(BasePath, "VEREDA");
+        public static string PastaDaAplicacao = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+        public static string BasePath = Path.Combine(PastaDaAplicacao, "BasePath");
+        public static string AREA_IMOVEL = Path.Combine(BasePath, "AREA_IMOVEL");
 
-        int ContagemClick = 0;
+        static string dbfFileName = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\BR_UF_2020.dbf";
+        static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
 
-        string ArquivoSHAPE = "";
+        private Color CorMapaInicial = Color.LightGray;
+        private Color CorVerdeDiferente = Color.SeaGreen;
+        private Color CorVerde = Color.ForestGreen;
+        private Color CorAzul = Color.AliceBlue;
+        private Color CorPreta = Color.Black;
+        private Color CorBranca = Color.White;
 
-        //string[] Pastas = { APP, AREA_CONSOLIDADA , AREA_DECLIVIDADE_MAIOR_45 , AREA_IMOVEL, AREA_POUSIO, AREA_TOPO_MORRO };
+        Font font1 = new Font("Century Gothic", 9, FontStyle.Bold, GraphicsUnit.Pixel);
 
-        List<string> listFiles = new List<string>();
+        int ContagemClickImgPasta = 0;
+        int ClickTxtArquivoPExtrair = 0;
+        string ShapeFileZipado = "";
 
-        public JavaPastry()
+        public static List<BR_UF_2020> ListaRegiaoNorte = new List<BR_UF_2020>();
+        public static List<BR_UF_2020> ListaRegiaoNordeste = new List<BR_UF_2020>();
+        public static List<BR_UF_2020> ListaRegiaoCentroOeste = new List<BR_UF_2020>();
+        public static List<BR_UF_2020> ListaRegiaoSudeste = new List<BR_UF_2020>();
+        public static List<BR_UF_2020> ListaRegiaoSul = new List<BR_UF_2020>();
+
+        public object ObjTipoObjClasseForm1 = new object();
+
+        EGIS.ShapeFileLib.ShapeFile sf;
+
+        public Form1()
         {
             InitializeComponent();
+            ContagemClickImgPasta = ContagemClickImgPasta + 1;
         }
-
-        private void btnBuscaClick(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            //listFiles.Clear();
-            // ListView.
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                txtNomeArquivo.Text = ofd.FileName;
-            }
-        }
-
-        private void label3_Click(object sender, EventArgs e) { }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             Arquivo zip = new Arquivo();
 
             DisplayImgSearch();
-            IncluiItems();
-        }
 
-        private void IncluiItems()
-        {
-            string[] tiposArquivo = { ".zip", ".dbf", ".prj", ".shp", ".shx" };
-            foreach (var i in tiposArquivo)
-            {
-                cbSelecionarTipoArquivo.Items.Add(i);
-            }
+            zip.CriarPasta(BasePath);
+            zip.CriarPasta(AREA_IMOVEL);
+
+            OpenShapefile(@"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\BR_UF_2020.shp");
+
         }
 
         public void DisplayImgSearch()
@@ -91,9 +81,192 @@ namespace APIFATECForms
             labelImgSearch.BackColor = Color.Transparent;
         }
 
-        internal static void ExtractToDirectory(string zipPath, string path)
+        public void CaixaDeMensagem()
         {
-            throw new NotImplementedException();
+            MessageBox.Show("Insira um tipo de arquivo válido.", "Erro",
+                         MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            txtArquivoPExtrair.Text = "";
+        }
+
+        public void OpenShapefile(string path)
+        {
+            this.sfMap1.ClearShapeFiles();
+
+            try
+            {
+                ConexaoDados dados = new ConexaoDados();
+                // try pra caso o usuario digite o arquivo de texto que nao tem extensao .shp
+                this.sfMap1.AddShapeFile(path, "ShapeFile", ""); // o ultimo parametro nao pode ser nulo
+                RenderMap();
+                dados.OpenConnection(constr);
+            }
+            catch (Exception ex)
+            { Console.WriteLine(ex.Message); }
+        }
+
+        public void RefreshMap()
+        {
+            // verificar esse metodo pq ele converte para o tamanho de zoom 13 e nao o atual que a imagem esta
+            double zoomLevel = 13;
+            this.sfMap1.ZoomLevel = zoomLevel;
+        }
+
+        public void CenterMap()
+        {
+            ZoomMap();
+            PointD point = new PointD(-51.5,-14.38); // quanto maior o valor do y, mais o mapa desce 
+            this.sfMap1.CentrePoint2D= point;
+        }
+
+        public void ZoomMap()
+        {
+            double zoomLevel = 20;
+            this.sfMap1.ZoomLevel = zoomLevel;
+        }
+
+        public void RenderMap()
+        {
+            sf = this.sfMap1[0];
+            
+            sf.RenderSettings.FillColor = CorMapaInicial; // aqui eu seto a cor do mapa inteiro
+            sf.RenderSettings.Font = font1; // aqui eu defino a fonte a ser usada no mapa
+            sf.RenderSettings.SelectFillColor = CorVerdeDiferente; // aqui eu defino a cor que vai ficar a regiao do mapa que fi clicada no getrecord
+            sf.RenderSettings.OutlineColor = CorBranca; // define a cor das bordas nao selecionadas
+            sf.RenderSettings.SelectOutlineColor = CorAzul; // aqui eu defino a cor do mapa quando selecionado // aqui eu defino a cor das bordas
+            sf.RenderSettings.FieldName = sf.RenderSettings.DbfReader.GetFieldNames()[1]; // selecionando 1 eu pego todos os nomes das UFs
+            RefreshMap();
+        }
+
+
+        private void btnTresPontosClick(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                txtNomeArquivo.Text = ofd.FileName; // printa o nome do arquivo selecionado
+            }
+
+        }
+
+        private void ImgPastaFechadaClick(object sender, EventArgs e)
+        {
+            // funcao para dar movimento na imagem da pasta
+            // o contagem click inicia com valor 1, assim que inicializamos os componentes do forms.
+            // iniciando com o valor 1 a imagem da pasta "iria abrir", sabendo que ela inicia fechada.
+
+            ImgPastaFechada.Size = ImgPastaFechada.Size;
+            ImgPastaFechada.BackColor = Color.Transparent;
+            ImgPastaFechada.Image = Image.FromFile(BasePath + @"/ImgPastaAberta-removebg-preview-redimensionada.png");
+
+            LabelBaseDeDados.BorderStyle = BorderStyle.FixedSingle;
+            LabelRegiaoNorte.Visible = true;
+            LabelRegiaoNordeste.Visible = true;
+            LabelRegiaoCentroOeste.Visible = true;
+            LabelRegiaoSudeste.Visible = true;
+            LabelRegiaoSul.Visible = true;
+
+            if (ContagemClickImgPasta > 1)
+            {
+                ImgPastaFechada.Image = Image.FromFile(BasePath + @"/ImgPastaFechada-removebg-preview-redimensionada.png");
+                ContagemClickImgPasta = ContagemClickImgPasta - 1;
+                LabelRegiaoNorte.Visible = false;
+                LabelRegiaoNordeste.Visible = false;
+                LabelRegiaoCentroOeste.Visible = false;
+                LabelRegiaoSudeste.Visible = false;
+                LabelRegiaoSul.Visible = false;
+            }
+
+            if (ContagemClickImgPasta == 0)
+            {
+                ImgPastaFechada.Image = Image.FromFile(BasePath + @"/ImgPastaFechada-removebg-preview-redimensionada.png");
+                ContagemClickImgPasta = ContagemClickImgPasta - 1;
+                LabelRegiaoNorte.Visible = false;
+                LabelRegiaoNordeste.Visible = false;
+                LabelRegiaoCentroOeste.Visible = false;
+                LabelRegiaoSudeste.Visible = false;
+                LabelRegiaoSul.Visible = false;
+            }
+
+            ContagemClickImgPasta = ContagemClickImgPasta - 1;
+
+            if (ContagemClickImgPasta == -2)
+            {
+                ContagemClickImgPasta = 1;
+            }
+
+        }
+
+        private void BaseDeDadosClick(object sender, EventArgs e)
+        {
+            ImgPastaFechadaClick(sender, e);
+            LabelBaseDeDados.BorderStyle = BorderStyle.Fixed3D; ;
+            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoSul.BorderStyle = BorderStyle.None;
+            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+            sf.ClearSelectedRecords();
+            RefreshMap();
+
+        }
+
+        private void txtArquivoPExtrairKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Arquivo zip = new Arquivo();
+                OpenFileDialog ofd = new OpenFileDialog();
+
+                ofd.Title = "Busca de Arquivo";
+                //ofd.InitialDirectory = NomePasta; se eu der esse comando eu inicio a funcao ShowDialog() dentro já dessa pasta
+                ofd.CheckFileExists = true;
+                ofd.CheckPathExists = true;
+                ofd.RestoreDirectory = true;
+                ofd.FileName = txtArquivoPExtrair.Text.Trim().ToUpper();
+                ofd.Filter = "*(.zip)|*zip";
+
+                if (ofd.ShowDialog(this) == DialogResult.OK)
+                {
+                    foreach (String arquivo in ofd.FileNames)
+                    {
+                        ShapeFileZipado = txtNomeArquivo.Text += arquivo;
+                    }
+
+                    try
+                    {
+                        using (ZipArchive archive = ZipFile.OpenRead(ShapeFileZipado))
+                        {
+                            Arquivo arquivo = new Arquivo();
+                            zip.DeletarArquivos(AREA_IMOVEL);
+                            foreach (ZipArchiveEntry entry in archive.Entries)
+                            {
+                                try
+                                {
+                                    if (IsDirectoryEmpty(AREA_IMOVEL) == true && entry.FullName == "AREA_IMOVEL.zip")
+                                    {
+
+                                        zip.ExtrairArquivo(entry.FullName, AREA_IMOVEL);
+                                        // DEPOIS QUE EXTRAI OS DOCUMENTOS EU TENHO QUE POPULAR O BANCO
+                                    }
+                                }
+                                catch { }
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                else
+                {
+                    //CaixaDeMensagem();
+                }
+
+            }
         }
 
         public bool IsDirectoryEmpty(string path)
@@ -101,244 +274,265 @@ namespace APIFATECForms
             return !Directory.EnumerateFileSystemEntries(path).Any();
         }
 
-
-
-
-
-        private void cbSelecionarTipoArquivo_Click(object sender, EventArgs e)
+        private void txtArquivoPExtrairClick(object sender, EventArgs e)
         {
-            ContagemClick++;
+            ClickTxtArquivoPExtrair++;
 
-            if (ContagemClick > 0 && ContagemClick < 2)
+            if (txtArquivoPExtrair.Text != "" && ClickTxtArquivoPExtrair == 1)
             {
-                cbSelecionarTipoArquivo.Text = "";
+                txtArquivoPExtrair.Text = "";
+            }
+
+            if (txtArquivoPExtrair.Text != "" && ClickTxtArquivoPExtrair == 3)
+            {
+                txtArquivoPExtrair.Text = txtArquivoPExtrair.Text;
+            }
+
+            ClickTxtArquivoPExtrair = ClickTxtArquivoPExtrair + 1;
+
+            if (ClickTxtArquivoPExtrair == 4)
+            {
+                ClickTxtArquivoPExtrair = 2;
+            }
+
+        }
+
+        private void labelImgSearch_Click(object sender, EventArgs e)
+        {
+            txtArquivoPExtrair.Text = "";
+        }
+
+        private void btnBuscarClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void sfMap1_MouseClick(object sender, MouseEventArgs e)
+        {
+            // como o proprio nome ja diz, essa funcao é executada assim que eu dou um click em algum lugar do mapa
+            // essa funcao e responsavel por pegar todas as informaçoes do local que ela clicou
+
+            if (sfMap1.ShapeFileCount == 0) return;
+
+            int recordIndex = sfMap1.GetShapeIndexAtPixelCoord(0, e.Location, 8);
+            if (recordIndex >= 0)
+            {
+                string[] recordAttributes = sfMap1[0].GetAttributeFieldValues(recordIndex);// pego os atributos dentro dauqle lugar que foi clicado
+                string[] attributeNames = sfMap1[0].GetAttributeFieldNames();
+                StringBuilder sb = new StringBuilder();
+                for (int n = 0; n < attributeNames.Length; ++n)
+                {
+                    sb.Append(attributeNames[n]).Append(':' + " ").AppendLine(recordAttributes[n].Trim());
+                }
+                MessageBox.Show(this, sb.ToString(), "Atributos da seleção", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
         }
 
-        private void cbSelecionarTipoArquivo_KeyDown(object sender, KeyEventArgs e)
+
+        private void RegiaoNorte_Click(object sender, EventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            sf.ClearSelectedRecords();
+
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;
+            LabelRegiaoNorte.BorderStyle = BorderStyle.Fixed3D;
+            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoSul.BorderStyle = BorderStyle.None;
+            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+            List<int> RegiaoNorte = new List<int>();
+
+            foreach (var uf in ListaRegiaoNorte)
             {
-                Arquivo zip = new Arquivo();
-
-                zip.CriarPasta(BasePath);
-                zip.CriarPasta(APP);
-                zip.CriarPasta(AREA_ALTITUDE_SUPERIOR_1800);
-                zip.CriarPasta(AREA_CONSOLIDADA);
-                zip.CriarPasta(AREA_DECLIVIDADE_MAIOR_45);
-                zip.CriarPasta(AREA_IMOVEL);
-                zip.CriarPasta(AREA_POUSIO);
-                zip.CriarPasta(AREA_TOPO_MORRO);
-                zip.CriarPasta(BANHADO);
-                zip.CriarPasta(BORDA_CHAPADA);
-                zip.CriarPasta(HIDROGRAFIA);
-                zip.CriarPasta(MANGUEZAL);
-                zip.CriarPasta(NASCENTE_OLHO_DAGUA);
-                zip.CriarPasta(RESERVA_LEGAL);
-                zip.CriarPasta(RESTINGA);
-                zip.CriarPasta(SERVIDAO_ADMINISTRATIVA);
-                zip.CriarPasta(USO_RESTRITO);
-                zip.CriarPasta(VEGETACAO_NATIVA);
-                zip.CriarPasta(VEREDA);
-
-                OpenFileDialog ofd = new OpenFileDialog();
-
-                ofd.Multiselect = true;
-                ofd.Title = "Selecionar Arquivos";
-                //ofd.InitialDirectory = NomePasta; se eu der esse comando eu inicio a funcao ShowDialog() dentro já dessa pasta
-                ofd.Filter = "|*" + cbSelecionarTipoArquivo.Text;
-                ofd.CheckFileExists = true;
-                ofd.CheckPathExists = true;
-                ofd.RestoreDirectory = true;
-                //ofd.ReadOnlyChecked = true;
-                //ofd.ShowReadOnly = true; // se eu deixar essa funcao verdadeira eu so vou poder visualizar o arquivo
-
-                DialogResult dr = ofd.ShowDialog(); // aqui eu abro a busca do arquivo na maquina
-
-                if (dr == System.Windows.Forms.DialogResult.OK)
+                if (uf.nm_regiao == "Norte")
                 {
-                    // Le os arquivos selecionados 
-                    foreach (String arquivo in ofd.FileNames)
-                    {
-                        ArquivoSHAPE = txtNomeArquivo.Text += arquivo;
-                    }
-
-                    using (ZipArchive archive = ZipFile.OpenRead(ArquivoSHAPE))
-                    {
-                        foreach (ZipArchiveEntry entry in archive.Entries)
-                        {
-                            try
-                            {
-                                if (IsDirectoryEmpty(APP) == true && entry.FullName == "APP.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, APP);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(AREA_ALTITUDE_SUPERIOR_1800) == true && entry.FullName == "AREA_ALTITUDE_SUPERIOR_1800.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, AREA_ALTITUDE_SUPERIOR_1800);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(AREA_CONSOLIDADA) == true && entry.FullName == "AREA_CONSOLIDADA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, AREA_CONSOLIDADA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(AREA_DECLIVIDADE_MAIOR_45) == true && entry.FullName == "AREA_DECLIVIDADE_MAIOR_45.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, AREA_DECLIVIDADE_MAIOR_45);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(AREA_IMOVEL) == true && entry.FullName == "AREA_IMOVEL.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, AREA_IMOVEL);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(AREA_POUSIO) == true && entry.FullName == "AREA_POUSIO.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, AREA_POUSIO);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(AREA_TOPO_MORRO) == true && entry.FullName == "AREA_TOPO_MORRO.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, AREA_TOPO_MORRO);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(BANHADO) == true && entry.FullName == "BANHADO.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, BANHADO);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(BORDA_CHAPADA) == true && entry.FullName == "BORDA_CHAPADA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, BORDA_CHAPADA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(HIDROGRAFIA) == true && entry.FullName == "HIDROGRAFIA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, HIDROGRAFIA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(MANGUEZAL) == true && entry.FullName == "MANGUEZAL.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, MANGUEZAL);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(NASCENTE_OLHO_DAGUA) == true && entry.FullName == "NASCENTE_OLHO_DAGUA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, NASCENTE_OLHO_DAGUA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(RESERVA_LEGAL) == true && entry.FullName == "RESERVA_LEGAL.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, RESERVA_LEGAL);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(RESTINGA) == true && entry.FullName == "RESTINGA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, RESTINGA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(SERVIDAO_ADMINISTRATIVA) == true && entry.FullName == "SERVIDAO_ADMINISTRATIVA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, SERVIDAO_ADMINISTRATIVA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(USO_RESTRITO) == true && entry.FullName == "USO_RESTRITO.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, USO_RESTRITO);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(VEGETACAO_NATIVA) == true && entry.FullName == "VEGETACAO_NATIVA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, VEGETACAO_NATIVA);
-                                }
-                            }
-                            catch { }
-                            try
-                            {
-                                if (IsDirectoryEmpty(VEREDA) == true && entry.FullName == "VEREDA.zip")
-                                {
-                                    zip.ExtrairArquivo(entry.FullName, VEREDA);
-                                }
-                            }
-                            catch { }
-
-                            try
-                            {
-                                zip.DeletarArquivos2(BasePath);
-                            }
-                            catch { }
-                        }
-                    }
-
-                    listFiles.Clear();
-                    listView1.Items.Clear();
-
-                    FileInfo fi = new FileInfo(ArquivoSHAPE);// aqui começo a mostrar o arquivo na tela
-                    listFiles.Add(fi.FullName);
-                    listView1.Items.Add(fi.Name, imageList1.Images.Count - 1);
+                    RegiaoNorte.Add(uf.cd_uf);
                 }
             }
+
+            foreach (var item in RegiaoNorte)
+            {
+                if (item == 11)
+                {
+                    int primeiro = item - 11;
+                    sf.SelectRecord(primeiro, true);
+                }
+                int i = item - 10;
+
+                sf.SelectRecord(i, true);
+            }
+
+            RefreshMap();
+
         }
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
+        private void RegiaoNordeste_Click(object sender, EventArgs e)
         {
-            //eu so aciono esse metodo quando dou um click no arquivo que foi exposto
-            if (listView1.FocusedItem != null)
+            sf.ClearSelectedRecords();
+
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;
+            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+            LabelRegiaoNordeste.BorderStyle = BorderStyle.Fixed3D;
+            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoSul.BorderStyle = BorderStyle.None;
+            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+            List<int> RegiaoNordeste = new List<int>();
+
+            foreach (var uf in ListaRegiaoNordeste)
+            {
+                if (uf.nm_regiao == "Nordeste")
+                {
+                    RegiaoNordeste.Add(uf.cd_uf);
+                }
+            }
+
+            foreach (var item in RegiaoNordeste)
             {
 
+                int i = item - 14;
+
+                sf.SelectRecord(i, true);
             }
-            //Process.Start(listFiles[listView1.FocusedItem.Index]);// aqui ele abre o arquivo com todas as pastas dentro dele
+
+            RefreshMap();
+
         }
 
+        private void RegiaoCentroOeste_Click(object sender, EventArgs e)
+        {
+            sf.ClearSelectedRecords();
+
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;
+            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.Fixed3D;
+            LabelRegiaoSul.BorderStyle = BorderStyle.None;
+            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+            List<int> RegiaoCentroOeste = new List<int>();
+
+            foreach (var uf in ListaRegiaoCentroOeste)
+            {
+                if (uf.nm_regiao == "Centro-oeste")
+                {
+                    RegiaoCentroOeste.Add(uf.cd_uf);
+                }
+            }
+
+            foreach (var item in RegiaoCentroOeste)
+            {
+                int i = item - 27;
+
+                sf.SelectRecord(i, true);
+            }
+
+            RefreshMap();
+
+        }
+
+        private void RegiaoSudeste_Click(object sender, EventArgs e)
+        {
+            sf.ClearSelectedRecords();
+
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;
+            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoSul.BorderStyle = BorderStyle.None;
+            LabelRegiaoSudeste.BorderStyle = BorderStyle.Fixed3D;
+
+            List<int> RegiaoSudeste = new List<int>();
+
+            foreach (var uf in ListaRegiaoSudeste)
+            {
+                if (uf.nm_regiao == "Sudeste")
+                {
+                    RegiaoSudeste.Add(uf.cd_uf);
+                }
+            }
+
+            foreach (var item in RegiaoSudeste)
+            {
+                if (item == 35)
+                {
+                    int ii = item - 16;
+                    sf.SelectRecord(ii, true);
+                }
+
+                int i = item - 15;
+                if (i < 20)
+                {
+                    sf.SelectRecord(i, true);
+                }
+            }
+
+            RefreshMap();
+
+        }
+
+        private void LabelRegiaoSul_Click(object sender, EventArgs e)
+        {
+            sf.ClearSelectedRecords();
+
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;
+            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+            LabelRegiaoSul.BorderStyle = BorderStyle.Fixed3D;
+            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+            List<int> RegiaoSul = new List<int>();
+
+            foreach (var uf in ListaRegiaoSul)
+            {
+                if (uf.nm_regiao == "Sul")
+                {
+                    RegiaoSul.Add(uf.cd_uf);
+                }
+            }
+
+            foreach (var item in RegiaoSul)
+            {
+                int i = item - 21;
+                sf.SelectRecord(i, true);
+            }
+
+            RefreshMap();
+
+        }
+
+        private void Form1_Click(object sender, EventArgs e)
+        {
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;    
+        }
+
+        private void ImgCenter_MouseEnter(object sender, EventArgs e)
+        {
+            ToolTip toolTip1 = new ToolTip();
+            toolTip1.ShowAlways = true;
+            toolTip1.SetToolTip(ImgCenter, "Centralizar mapa");
+        }
+
+        private void ImgCenter_Click(object sender, EventArgs e)
+        {
+            CenterMap();
+            RefreshMap();
+        }
+
+        private void ImgZoomIn_MouseEnter(object sender, EventArgs e)
+        {
+            ToolTip toolTip1 = new ToolTip();
+            toolTip1.ShowAlways = true;
+            toolTip1.SetToolTip(ImgZoomIn, "Mais zoom");
+
+        }
+
+        private void ImgZoomOut_MouseEnter(object sender, EventArgs e)
+        {
+            ToolTip toolTip1 = new ToolTip();
+            toolTip1.ShowAlways = true;
+            toolTip1.SetToolTip(ImgZoomOut, "Menos zoom");
+        }
     }
 }

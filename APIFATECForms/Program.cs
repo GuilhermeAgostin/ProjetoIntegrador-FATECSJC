@@ -14,7 +14,7 @@ namespace APIFATECForms
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new JavaPastry());   
+            Application.Run(new Form1());   
         }
     }
 }
