@@ -33,7 +33,6 @@ namespace APIFATECForms
             this.btnBuscar = new System.Windows.Forms.Button();
             this.txtNomeArquivo = new System.Windows.Forms.TextBox();
             this.imgLabel = new System.Windows.Forms.Label();
-            this.labelImgSearch = new System.Windows.Forms.Label();
             this.ArquivoSelecionado = new System.Windows.Forms.Label();
             this.sfMap1 = new EGIS.Controls.SFMap();
             this.LabelBaseDeDados = new System.Windows.Forms.Label();
@@ -49,19 +48,22 @@ namespace APIFATECForms
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.ImgZoomOut = new System.Windows.Forms.PictureBox();
             this.ImgZoomIn = new System.Windows.Forms.PictureBox();
+            this.pictureBox3 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.ImgCenter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImgPastaFechada)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImgZoomOut)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImgZoomIn)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBuscar
             // 
+            this.btnBuscar.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.btnBuscar.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnBuscar.ForeColor = System.Drawing.Color.Black;
-            this.btnBuscar.Location = new System.Drawing.Point(633, 9);
+            this.btnBuscar.Location = new System.Drawing.Point(596, 7);
             this.btnBuscar.Margin = new System.Windows.Forms.Padding(4);
             this.btnBuscar.Name = "btnBuscar";
             this.btnBuscar.Size = new System.Drawing.Size(100, 30);
@@ -72,7 +74,7 @@ namespace APIFATECForms
             // 
             // txtNomeArquivo
             // 
-            this.txtNomeArquivo.Location = new System.Drawing.Point(372, 578);
+            this.txtNomeArquivo.Location = new System.Drawing.Point(372, 587);
             this.txtNomeArquivo.Margin = new System.Windows.Forms.Padding(4);
             this.txtNomeArquivo.Name = "txtNomeArquivo";
             this.txtNomeArquivo.ReadOnly = true;
@@ -88,25 +90,12 @@ namespace APIFATECForms
             this.imgLabel.Size = new System.Drawing.Size(0, 17);
             this.imgLabel.TabIndex = 9;
             // 
-            // labelImgSearch
-            // 
-            this.labelImgSearch.AutoSize = true;
-            this.labelImgSearch.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.labelImgSearch.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.labelImgSearch.Location = new System.Drawing.Point(223, 9);
-            this.labelImgSearch.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelImgSearch.Name = "labelImgSearch";
-            this.labelImgSearch.Size = new System.Drawing.Size(33, 17);
-            this.labelImgSearch.TabIndex = 11;
-            this.labelImgSearch.Text = "Img";
-            this.labelImgSearch.Click += new System.EventHandler(this.labelImgSearch_Click);
-            // 
             // ArquivoSelecionado
             // 
             this.ArquivoSelecionado.AutoSize = true;
             this.ArquivoSelecionado.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ArquivoSelecionado.ForeColor = System.Drawing.Color.Black;
-            this.ArquivoSelecionado.Location = new System.Drawing.Point(210, 578);
+            this.ArquivoSelecionado.Location = new System.Drawing.Point(210, 587);
             this.ArquivoSelecionado.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.ArquivoSelecionado.Name = "ArquivoSelecionado";
             this.ArquivoSelecionado.Size = new System.Drawing.Size(154, 19);
@@ -118,7 +107,7 @@ namespace APIFATECForms
             this.sfMap1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.sfMap1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.sfMap1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.sfMap1.CentrePoint2D = ((EGIS.ShapeFileLib.PointD)(resources.GetObject("sfMap1.CentrePoint2D")));
             this.sfMap1.Cursor = System.Windows.Forms.Cursors.Cross;
             this.sfMap1.DefaultMapCursor = System.Windows.Forms.Cursors.Cross;
@@ -136,7 +125,8 @@ namespace APIFATECForms
             this.sfMap1.UseMercatorProjection = false;
             this.sfMap1.ZoomLevel = 1D;
             this.sfMap1.ZoomToSelectedExtentWhenCtrlKeydown = false;
-            this.sfMap1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.sfMap1_MouseClick);
+            this.sfMap1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.sfMap1_MouseDoubleClick);
+            this.sfMap1.MouseEnter += new System.EventHandler(this.sfMap1_MouseEnter);
             // 
             // LabelBaseDeDados
             // 
@@ -149,13 +139,14 @@ namespace APIFATECForms
             this.LabelBaseDeDados.TabIndex = 20;
             this.LabelBaseDeDados.Text = "Base de Dados";
             this.LabelBaseDeDados.Click += new System.EventHandler(this.BaseDeDadosClick);
+            this.LabelBaseDeDados.MouseLeave += new System.EventHandler(this.LabelBaseDeDados_MouseLeave);
             // 
             // txtArquivoPExtrair
             // 
             this.txtArquivoPExtrair.Font = new System.Drawing.Font("Century Gothic", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtArquivoPExtrair.Location = new System.Drawing.Point(254, 12);
+            this.txtArquivoPExtrair.Location = new System.Drawing.Point(214, 12);
             this.txtArquivoPExtrair.Name = "txtArquivoPExtrair";
-            this.txtArquivoPExtrair.Size = new System.Drawing.Size(372, 24);
+            this.txtArquivoPExtrair.Size = new System.Drawing.Size(351, 24);
             this.txtArquivoPExtrair.TabIndex = 21;
             this.txtArquivoPExtrair.Text = " Digite o nome do arquivo que deseja extrair...";
             this.txtArquivoPExtrair.Click += new System.EventHandler(this.txtArquivoPExtrairClick);
@@ -224,7 +215,7 @@ namespace APIFATECForms
             // ImgCenter
             // 
             this.ImgCenter.Image = ((System.Drawing.Image)(resources.GetObject("ImgCenter.Image")));
-            this.ImgCenter.Location = new System.Drawing.Point(750, 9);
+            this.ImgCenter.Location = new System.Drawing.Point(741, 7);
             this.ImgCenter.Name = "ImgCenter";
             this.ImgCenter.Size = new System.Drawing.Size(32, 31);
             this.ImgCenter.TabIndex = 28;
@@ -264,29 +255,44 @@ namespace APIFATECForms
             // ImgZoomOut
             // 
             this.ImgZoomOut.Image = ((System.Drawing.Image)(resources.GetObject("ImgZoomOut.Image")));
-            this.ImgZoomOut.Location = new System.Drawing.Point(879, 9);
+            this.ImgZoomOut.Location = new System.Drawing.Point(888, 7);
             this.ImgZoomOut.Name = "ImgZoomOut";
             this.ImgZoomOut.Size = new System.Drawing.Size(32, 31);
             this.ImgZoomOut.TabIndex = 30;
             this.ImgZoomOut.TabStop = false;
+            this.ImgZoomOut.Click += new System.EventHandler(this.ImgZoomOut_Click);
             this.ImgZoomOut.MouseEnter += new System.EventHandler(this.ImgZoomOut_MouseEnter);
             // 
             // ImgZoomIn
             // 
             this.ImgZoomIn.Image = ((System.Drawing.Image)(resources.GetObject("ImgZoomIn.Image")));
-            this.ImgZoomIn.Location = new System.Drawing.Point(813, 9);
+            this.ImgZoomIn.Location = new System.Drawing.Point(816, 7);
             this.ImgZoomIn.Name = "ImgZoomIn";
             this.ImgZoomIn.Size = new System.Drawing.Size(32, 31);
             this.ImgZoomIn.TabIndex = 31;
             this.ImgZoomIn.TabStop = false;
+            this.ImgZoomIn.Click += new System.EventHandler(this.ImgZoomIn_Click);
             this.ImgZoomIn.MouseEnter += new System.EventHandler(this.ImgZoomIn_MouseEnter);
+            // 
+            // pictureBox3
+            // 
+            this.pictureBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.pictureBox3.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.pictureBox3.Location = new System.Drawing.Point(237, 499);
+            this.pictureBox3.Name = "pictureBox3";
+            this.pictureBox3.Size = new System.Drawing.Size(55, 55);
+            this.pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox3.TabIndex = 32;
+            this.pictureBox3.TabStop = false;
+            this.pictureBox3.Visible = false;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ScrollBar;
-            this.ClientSize = new System.Drawing.Size(941, 667);
+            this.ClientSize = new System.Drawing.Size(941, 622);
+            this.Controls.Add(this.pictureBox3);
             this.Controls.Add(this.ImgZoomIn);
             this.Controls.Add(this.ImgZoomOut);
             this.Controls.Add(this.ImgCenter);
@@ -302,7 +308,6 @@ namespace APIFATECForms
             this.Controls.Add(this.sfMap1);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.ArquivoSelecionado);
-            this.Controls.Add(this.labelImgSearch);
             this.Controls.Add(this.imgLabel);
             this.Controls.Add(this.txtNomeArquivo);
             this.Controls.Add(this.btnBuscar);
@@ -313,12 +318,14 @@ namespace APIFATECForms
             this.Text = "JavaPastry";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Click += new System.EventHandler(this.Form1_Click);
+            this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
             ((System.ComponentModel.ISupportInitialize)(this.ImgCenter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImgPastaFechada)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImgZoomOut)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImgZoomIn)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -329,7 +336,6 @@ namespace APIFATECForms
         private System.Windows.Forms.Button btnBuscar;
         private System.Windows.Forms.TextBox txtNomeArquivo;
         private System.Windows.Forms.Label imgLabel;
-        private System.Windows.Forms.Label labelImgSearch;
         private System.Windows.Forms.Label ArquivoSelecionado;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox ImgPastaFechada;
@@ -345,6 +351,7 @@ namespace APIFATECForms
         private System.Windows.Forms.PictureBox ImgCenter;
         private System.Windows.Forms.PictureBox ImgZoomOut;
         private System.Windows.Forms.PictureBox ImgZoomIn;
+        private System.Windows.Forms.PictureBox pictureBox3;
     }
 }
 

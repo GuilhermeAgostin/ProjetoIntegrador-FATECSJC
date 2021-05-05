@@ -22,8 +22,18 @@
     <Property Name="sigla_uf" Type="char" MaxLength="2" />
     <Property Name="nm_regiao" Type="varchar" MaxLength="15" />
   </EntityType>
+  <EntityType Name="BRASIL_MUNICIPIO">
+    <Key>
+      <PropertyRef Name="cd_mun" />
+    </Key>
+    <Property Name="cd_mun" Type="int" Nullable="false" />
+    <Property Name="nm_mun" Type="varchar" MaxLength="45" />
+    <Property Name="sigla_uf" Type="char" MaxLength="2" />
+    <Property Name="área_km2" Type="decimal" Precision="10" Scale="3" />
+  </EntityType>
   <EntityContainer Name="APIFATECModelStoreContainer">
     <EntitySet Name="AREA_IMOVEL" EntityType="Self.AREA_IMOVEL" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="BR_UF_2020" EntityType="Self.BR_UF_2020" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="BRASIL_MUNICIPIO" EntityType="Self.BRASIL_MUNICIPIO" Schema="dbo" store:Type="Tables" />
   </EntityContainer>
 </Schema>

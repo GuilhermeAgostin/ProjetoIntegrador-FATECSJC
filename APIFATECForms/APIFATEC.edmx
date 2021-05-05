@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="APIFATECModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="APIFATECModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AREA_IMOVEL">
           <Key>
             <PropertyRef Name="cod_imovel" />
@@ -27,20 +27,34 @@
           <Property Name="sigla_uf" Type="char" MaxLength="2" />
           <Property Name="nm_regiao" Type="varchar" MaxLength="15" />
         </EntityType>
+        <EntityType Name="BRASIL_MUNICIPIO">
+          <Key>
+            <PropertyRef Name="cd_mun" />
+          </Key>
+          <Property Name="cd_mun" Type="int" Nullable="false" />
+          <Property Name="nm_mun" Type="varchar" MaxLength="45" />
+          <Property Name="sigla_uf" Type="char" MaxLength="2" />
+          <Property Name="área_km2" Type="decimal" Precision="10" Scale="3" />
+        </EntityType>
         <EntityContainer Name="APIFATECModelStoreContainer">
           <EntitySet Name="AREA_IMOVEL" EntityType="Self.AREA_IMOVEL" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="BR_UF_2020" EntityType="Self.BR_UF_2020" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="BRASIL_MUNICIPIO" EntityType="Self.BRASIL_MUNICIPIO" Schema="dbo" store:Type="Tables" />
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="APIFATECModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="APIFATECEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AREA_IMOVEL" EntityType="APIFATECModel.AREA_IMOVEL" />
+          <EntitySet Name="BR_UF_2020" EntityType="APIFATECModel.BR_UF_2020" />
+          <EntitySet Name="BRASIL_MUNICIPIO" EntityType="APIFATECModel.BRASIL_MUNICIPIO" />
+        </EntityContainer>
         <EntityType Name="AREA_IMOVEL">
           <Key>
             <PropertyRef Name="cod_imovel" />
           </Key>
-          <Property Name="cod_imovel" Type="String" MaxLength="45" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="cod_imovel" Type="String" Nullable="false" MaxLength="45" FixedLength="false" Unicode="false" />
           <Property Name="num_area" Type="Decimal" Precision="18" Scale="10" />
           <Property Name="cod_estado" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
           <Property Name="nom_munici" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
@@ -58,10 +72,15 @@
           <Property Name="sigla_uf" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
           <Property Name="nm_regiao" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
         </EntityType>
-        <EntityContainer Name="APIFATECEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="AREA_IMOVEL" EntityType="Self.AREA_IMOVEL" />
-          <EntitySet Name="BR_UF_2020" EntityType="Self.BR_UF_2020" />
-        </EntityContainer>
+        <EntityType Name="BRASIL_MUNICIPIO">
+          <Key>
+            <PropertyRef Name="cd_mun" />
+          </Key>
+          <Property Name="cd_mun" Type="Int32" Nullable="false" />
+          <Property Name="nm_mun" Type="String" MaxLength="45" FixedLength="false" Unicode="false" />
+          <Property Name="sigla_uf" Type="String" MaxLength="2" FixedLength="true" Unicode="false" />
+          <Property Name="área_km2" Type="Decimal" Precision="10" Scale="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -71,24 +90,34 @@
           <EntitySetMapping Name="AREA_IMOVEL">
             <EntityTypeMapping TypeName="APIFATECModel.AREA_IMOVEL">
               <MappingFragment StoreEntitySet="AREA_IMOVEL">
-                <ScalarProperty Name="cod_imovel" ColumnName="cod_imovel" />
-                <ScalarProperty Name="num_area" ColumnName="num_area" />
-                <ScalarProperty Name="cod_estado" ColumnName="cod_estado" />
-                <ScalarProperty Name="nom_munici" ColumnName="nom_munici" />
-                <ScalarProperty Name="num_modulo" ColumnName="num_modulo" />
-                <ScalarProperty Name="tipo_imove" ColumnName="tipo_imove" />
-                <ScalarProperty Name="situacao" ColumnName="situacao" />
                 <ScalarProperty Name="condicao_i" ColumnName="condicao_i" />
+                <ScalarProperty Name="situacao" ColumnName="situacao" />
+                <ScalarProperty Name="tipo_imove" ColumnName="tipo_imove" />
+                <ScalarProperty Name="num_modulo" ColumnName="num_modulo" />
+                <ScalarProperty Name="nom_munici" ColumnName="nom_munici" />
+                <ScalarProperty Name="cod_estado" ColumnName="cod_estado" />
+                <ScalarProperty Name="num_area" ColumnName="num_area" />
+                <ScalarProperty Name="cod_imovel" ColumnName="cod_imovel" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="BR_UF_2020">
             <EntityTypeMapping TypeName="APIFATECModel.BR_UF_2020">
               <MappingFragment StoreEntitySet="BR_UF_2020">
-                <ScalarProperty Name="cd_uf" ColumnName="cd_uf" />
-                <ScalarProperty Name="nm_uf" ColumnName="nm_uf" />
-                <ScalarProperty Name="sigla_uf" ColumnName="sigla_uf" />
                 <ScalarProperty Name="nm_regiao" ColumnName="nm_regiao" />
+                <ScalarProperty Name="sigla_uf" ColumnName="sigla_uf" />
+                <ScalarProperty Name="nm_uf" ColumnName="nm_uf" />
+                <ScalarProperty Name="cd_uf" ColumnName="cd_uf" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BRASIL_MUNICIPIO">
+            <EntityTypeMapping TypeName="APIFATECModel.BRASIL_MUNICIPIO">
+              <MappingFragment StoreEntitySet="BRASIL_MUNICIPIO">
+                <ScalarProperty Name="área_km2" ColumnName="área_km2" />
+                <ScalarProperty Name="sigla_uf" ColumnName="sigla_uf" />
+                <ScalarProperty Name="nm_mun" ColumnName="nm_mun" />
+                <ScalarProperty Name="cd_mun" ColumnName="cd_mun" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

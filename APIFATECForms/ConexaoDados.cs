@@ -5,8 +5,6 @@ using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace APIFATECForms
 {
@@ -16,10 +14,19 @@ namespace APIFATECForms
 
         object conexaoDadosObjTipoObjClasseConexaoDados = new object();
 
-        static string dbfFileName = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\BR_UF_2020.dbf";
-        static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
 
-        static string ExcelFileName = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\" + "arquivo_convertido";
+        static string PastaDaAplicacao = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
+        static string BasePath = Path.Combine(PastaDaAplicacao, "BasePath");
+        //static string dbfFileName = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\BR_UF_2020.dbf";
+        static string dbfFileName = BasePath + @"\BR_MUNICIPIOS_2020\BR_MUNICIPIOS_2020.dbf";
+
+        static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
+        /* a variavel excelfilename tem que vir come o texto que o usario digitou quando buscou um arquivo. Para assim,
+           conseguir salvar no banco de acordo com o IBGE, dessa forma, eu consigo deixar o insert no banco automatizado        
+         */
+        //static string ExcelFileName = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\" + "arquivo_convertido";
+        static string ExcelFileName = BasePath + @"\BR_MUNICIPIOS_2020\" + "BR_Municipios_2020.xlsx";
+        int tentativa = 0;
 
         static Missing mv = Missing.Value;
 
@@ -31,10 +38,10 @@ namespace APIFATECForms
 
             using (OleDbConnection connection = new OleDbConnection(connectionString))
             {
-                connectionString = constr;
+;
 
-                List<object> ListaTipoObjClasseConexaoDados = new List<object>();
-                List<ConexaoDados> ListaTipoConexaoDadosClasseConexaoDados = new List<ConexaoDados>(); //Lista da classe ConexaoDados
+               // List<object> ListaTipoObjClasseConexaoDados = new List<object>();
+                //List<ConexaoDados> ListaTipoConexaoDadosClasseConexaoDados = new List<ConexaoDados>(); //Lista da classe ConexaoDados
 
                 try
                 {
@@ -64,54 +71,102 @@ namespace APIFATECForms
                 if (dt != null && dt.Rows.Count > 0)
                 {
                     Arquivo arquivo = new Arquivo();
-                    arquivo.VerificaSeExistePastaX(dt, ExcelFileName);
+                    if(arquivo.VerificaSeExisteArquivoX(dt, ExcelFileName) == true)
+                    {
+                        GenerateExcel(dt, ExcelFileName);
+                    }
+                   // arquivo.VerificaSeExisteArquivoX(dt, ExcelFileName);
                 }
 
                 OleDbDataReader dr = cmd.ExecuteReader();
 
                 while (dr.Read())
                 {
-                    string Cd_uf = dr[0].ToString().Trim();
-                    string Nm_uf = dr[1].ToString().Trim();
-                    string Sigla_uf = dr[2].ToString().Trim();
-                    string Nm_regiao = dr[3].ToString().Trim();
-
-                    int CD_UF = int.Parse(Cd_uf);
-
-                    BR_UF_2020 bR_UF_2020 = new BR_UF_2020
+                    // criar um codigo que leia as colunas do excel e preencha o objeto no banco
+                    // e não que eu mude a cada insert
+                    // pode ser feita um querie no banco que busque os dados referentes as colunas do excel, no qual retorne qual tabela deve ser inserido tudo que estiver preencgido no excel
+                    // lembrar de substituir os cracteres especiais por letras e acentos certos
+                    
+                    //string Cd_uf = dr[0].ToString().Trim();
+                    //string Nm_uf = dr[1].ToString().Trim();
+                    //string Sigla_uf = dr[2].ToString().Trim();
+                    //string Nm_regiao = dr[3].ToString().Trim();
+                    
+                    if(tentativa <1)
                     {
-                        cd_uf = CD_UF,
-                        nm_regiao = Nm_regiao,
-                        nm_uf = Nm_uf,
-                        sigla_uf = Sigla_uf,
-                    };
+                        string cd_mun = dr[0].ToString().Trim();
+                        string nm_mun = dr[1].ToString().Trim();
+                        string sigla_uf = dr[2].ToString().Trim();
+                        string area_km2 = dr[3].ToString().Trim();
 
-                    try
-                    {
-                        if(db.BR_UF_2020 != null)
+                        //int CD_UF = int.Parse(Cd_uf);
+                        int Cd_mun = int.Parse(cd_mun);
+                        decimal Area_km2 = decimal.Parse(area_km2);
+
+                        BRASIL_MUNICIPIO bRASIL_MUNICIPIO = new BRASIL_MUNICIPIO
                         {
-                            db.BR_UF_2020.Add(bR_UF_2020);
-                            db.SaveChanges();
-                        }
-                        
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex);
-                    }
+                            cd_mun = Cd_mun,
+                            nm_mun = nm_mun,
+                            sigla_uf = sigla_uf,
+                            área_km2 = Area_km2
+                        };
 
+                        try
+                        {
+                            if (db.BRASIL_MUNICIPIO != null)
+                            {
+                                db.BRASIL_MUNICIPIO.Add(bRASIL_MUNICIPIO);
+                                db.SaveChanges();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            tentativa++;
+                            // Console.WriteLine(ex);
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                    
 
                 }
 
+                /*
+                BR_UF_2020 bR_UF_2020 = new BR_UF_2020
+                {
+                    cd_uf = CD_UF,
+                    nm_regiao = Nm_regiao,
+                    nm_uf = Nm_uf,
+                    sigla_uf = Sigla_uf,
+                };
 
+                try
+                {
+                    if(db.BR_UF_2020 != null)
+                    {
+                        db.BR_UF_2020.Add(bR_UF_2020);
+                        db.SaveChanges();
+                    }
+
+                }
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                */
 
                 List<BR_UF_2020> UFsRegiaoNorte = db.BR_UF_2020.Where(banco => banco.nm_regiao == "Norte").ToList();
                 List<BR_UF_2020> UFsRegiaoNordeste = db.BR_UF_2020.Where(banco => banco.nm_regiao == "Nordeste").ToList();
                 List<BR_UF_2020> UFsRegiaoCentroOeste = db.BR_UF_2020.Where(banco => banco.nm_regiao == "Centro-oeste").ToList();
                 List<BR_UF_2020> UFsRegiaoSudeste = db.BR_UF_2020.Where(banco => banco.nm_regiao == "Sudeste").ToList();
                 List<BR_UF_2020> UFsRegiaoSul = db.BR_UF_2020.Where(banco => banco.nm_regiao == "Sul").ToList();
+                List<BR_UF_2020> UFsBrasil = db.BR_UF_2020.Where(banco => banco.cd_uf == banco.cd_uf).ToList();
 
-
+                ListaBrasil = UFsBrasil;
                 ListaRegiaoNorte = UFsRegiaoNorte;
                 ListaRegiaoNordeste = UFsRegiaoNordeste;
                 ListaRegiaoCentroOeste = UFsRegiaoCentroOeste;
@@ -126,7 +181,6 @@ namespace APIFATECForms
                     }
                     catch { }
                 }
-
 
             }
             //return

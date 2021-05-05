@@ -56,18 +56,22 @@ namespace APIFATECForms
 
         }
 
-        public void VerificaSeExistePastaX(DataTable sourceDataTable, string ExcelFileName)
+        public bool VerificaSeExisteArquivoX(DataTable sourceDataTable, string ExcelFileName)
         {
-            string excelfileName  = ExcelFileName + ".xlsx";
+            string excelfileName  = ExcelFileName;
+            bool retorno;
 
             if (File.Exists(excelfileName) == true)
             {
                 Console.WriteLine("Já existe esse arquivo");
+                retorno = false;
             }
             else
             {
-                GenerateExcel(sourceDataTable, ExcelFileName);
+                retorno = true;
+                //GenerateExcel(sourceDataTable, ExcelFileName);
             }
+            return retorno;
         }
 
         

@@ -108,6 +108,9 @@
     <Compile Include="Arquivo.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="BRASIL_MUNICIPIO.cs">
+      <DependentUpon>APIFATEC.tt</DependentUpon>
+    </Compile>
     <Compile Include="BR_UF_2020.cs">
       <DependentUpon>APIFATEC.tt</DependentUpon>
     </Compile>

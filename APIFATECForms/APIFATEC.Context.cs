@@ -27,5 +27,6 @@ namespace APIFATECForms
     
         public virtual DbSet<AREA_IMOVEL> AREA_IMOVEL { get; set; }
         public virtual DbSet<BR_UF_2020> BR_UF_2020 { get; set; }
+        public virtual DbSet<BRASIL_MUNICIPIO> BRASIL_MUNICIPIO { get; set; }
     }
 }

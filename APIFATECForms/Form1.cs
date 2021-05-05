@@ -7,6 +7,7 @@ using System.Data;
 using System.Data.OleDb;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -22,12 +23,19 @@ namespace APIFATECForms
 {
     public partial class Form1 : Form
     {
+
+        APIFATECEntities db = new APIFATECEntities();
+
         public static string PastaDaAplicacao = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName;
         public static string BasePath = Path.Combine(PastaDaAplicacao, "BasePath");
         public static string AREA_IMOVEL = Path.Combine(BasePath, "AREA_IMOVEL");
 
-        static string dbfFileName = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\BR_UF_2020.dbf";
-        static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
+        //static string dbfFileName = BasePath + @"\SHAPEFILE_BRASIL\BR_UF_2020.dbf";
+        static string dbfFileName = BasePath + @"\BR_MUNICIPIOS_2020\BR_MUNICIPIOS_2020.dbf";
+        public static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
+        static string pastaPrimeiraRenderizacao = BasePath + @"\SHAPEFILE_BRASIL\BR_UF_2020.shp";
+        //static string pastaPrimeiraRenderizacaoBrasilMunicipios = BasePath + @"\BR_MUNICIPIOS_2020\BR_MUNICIPIOS_2020.shp";
+       
 
         private Color CorMapaInicial = Color.LightGray;
         private Color CorVerdeDiferente = Color.SeaGreen;
@@ -36,19 +44,26 @@ namespace APIFATECForms
         private Color CorPreta = Color.Black;
         private Color CorBranca = Color.White;
 
+        private Simulacao gifImage = null;
+        private string filePath = @"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\Spinner-1s-200px.gif";
+
         Font font1 = new Font("Century Gothic", 9, FontStyle.Bold, GraphicsUnit.Pixel);
+
+        int Segundos = 0;
+        string Acrescimo = "";
+
+       DialogResult result;
 
         int ContagemClickImgPasta = 0;
         int ClickTxtArquivoPExtrair = 0;
         string ShapeFileZipado = "";
 
+        public static List<BR_UF_2020> ListaBrasil = new List<BR_UF_2020>();
         public static List<BR_UF_2020> ListaRegiaoNorte = new List<BR_UF_2020>();
         public static List<BR_UF_2020> ListaRegiaoNordeste = new List<BR_UF_2020>();
         public static List<BR_UF_2020> ListaRegiaoCentroOeste = new List<BR_UF_2020>();
         public static List<BR_UF_2020> ListaRegiaoSudeste = new List<BR_UF_2020>();
         public static List<BR_UF_2020> ListaRegiaoSul = new List<BR_UF_2020>();
-
-        public object ObjTipoObjClasseForm1 = new object();
 
         EGIS.ShapeFileLib.ShapeFile sf;
 
@@ -62,15 +77,19 @@ namespace APIFATECForms
         {
             Arquivo zip = new Arquivo();
 
-            DisplayImgSearch();
-
             zip.CriarPasta(BasePath);
             zip.CriarPasta(AREA_IMOVEL);
+            //OpenShapefile(pastaPrimeiraRenderizacao);
+            gifImage = new Simulacao(filePath);
+            gifImage.ReverseAtEnd = false; //dont reverse at end
+                                           //pictureBox3.BackColor = Color.Transparent;
+            pictureBox3.Visible = true;
+            pictureBox3.Image = gifImage.GetNextFrame();
 
-            OpenShapefile(@"C:\Users\Agostin\Desktop\Grupo-JavaPastry-BranchTeste\grupo02-javapastry\APIFATECForms\BasePath\SHAPEFILE_BRASIL\BR_UF_2020.shp");
-
+            OpenShapefile(pastaPrimeiraRenderizacao);
         }
 
+        /*
         public void DisplayImgSearch()
         {
             labelImgSearch.Image = Image.FromFile(BasePath + @"/Searchpng.png");
@@ -80,16 +99,15 @@ namespace APIFATECForms
             labelImgSearch.Text = "";
             labelImgSearch.BackColor = Color.Transparent;
         }
+        */
 
-        public void CaixaDeMensagem()
+        public void CaixaDeMensagem(string mensagem, string caption, MessageBoxButtons button, MessageBoxIcon messageBoxIcon)
         {
-            MessageBox.Show("Insira um tipo de arquivo válido.", "Erro",
-                         MessageBoxButtons.OK, MessageBoxIcon.Error);
-
-            txtArquivoPExtrair.Text = "";
+            MenosZoom(5);
+            result = MessageBox.Show(mensagem, caption, button, messageBoxIcon);
         }
 
-        public void OpenShapefile(string path)
+        public string OpenShapefile(string path)
         {
             this.sfMap1.ClearShapeFiles();
 
@@ -98,56 +116,93 @@ namespace APIFATECForms
                 ConexaoDados dados = new ConexaoDados();
                 // try pra caso o usuario digite o arquivo de texto que nao tem extensao .shp
                 this.sfMap1.AddShapeFile(path, "ShapeFile", ""); // o ultimo parametro nao pode ser nulo
-                RenderMap();
-                dados.OpenConnection(constr);
+                RenderMap(CorMapaInicial, CorVerdeDiferente, CorBranca);
+                dados.OpenConnection(constr);// nessa funcao que eu gero o excel // nao preciso mais gerar o excel
             }
             catch (Exception ex)
-            { Console.WriteLine(ex.Message); }
+            { }
+            return path;
         }
 
         public void RefreshMap()
         {
-            // verificar esse metodo pq ele converte para o tamanho de zoom 13 e nao o atual que a imagem esta
-            double zoomLevel = 13;
-            this.sfMap1.ZoomLevel = zoomLevel;
+            this.sfMap1.ZoomLevel = this.sfMap1.ZoomLevel;
         }
 
         public void CenterMap()
         {
-            ZoomMap();
-            PointD point = new PointD(-51.5,-14.38); // quanto maior o valor do y, mais o mapa desce 
-            this.sfMap1.CentrePoint2D= point;
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
+            {
+                //PointD pontoCentro = this.sfMap1.CentrePoint2D; // get ponto centro do mapa
+                PointD point = new PointD(-51.4190449415, -14.2396684585);
+                this.sfMap1.CentrePoint2D = point;
+                double ZoomAtual = this.sfMap1.ZoomLevel;
+                this.sfMap1.ZoomLevel = 13.274216406924603;
+            }
+            else
+            {
+                PointD pontoCentro = this.sfMap1.CentrePoint2D; // get ponto centro do mapa
+                PointD point = new PointD(-64.7019204307494, -3.58159896146659);
+                //{{X=-64,7019204307494, Y=-3,58159896146659}}
+                //this.sfMap1.CentrePoint2D = point;
+                double ZoomAtual = this.sfMap1.ZoomLevel;
+               // this.sfMap1.ZoomLevel = ZoomAtual;
+                this.sfMap1.ZoomLevel = 30.826027930038009;
+            }
         }
 
-        public void ZoomMap()
+        public void MaisZoom()
         {
-            double zoomLevel = 20;
-            this.sfMap1.ZoomLevel = zoomLevel;
+            double ZoomAtual = this.sfMap1.ZoomLevel;
+            this.sfMap1.ZoomLevel = ZoomAtual + 3;
+            if (ZoomAtual > 30)
+            {
+                string Mensagem = "Fora do limite máximo renderização.";
+                string Caption = "Atenção!";
+                MessageBoxButtons Button = MessageBoxButtons.OK;
+                MessageBoxIcon Icon = MessageBoxIcon.Warning;
+
+                CaixaDeMensagem(Mensagem, Caption, Button, Icon);
+                CenterMap();
+            }
         }
 
-        public void RenderMap()
+        public void MenosZoom(double zoom)
         {
-            sf = this.sfMap1[0];
+            double ZoomAtual = this.sfMap1.ZoomLevel;
+            try
+            {
+                this.sfMap1.ZoomLevel = ZoomAtual - zoom;
+            }
+            catch
+            {
+                if (ZoomAtual < 4)
+                {
+                    string Mensagem = "Fora do limite mínimo renderização.";
+                    string Caption = "Atenção!";
+                    MessageBoxButtons Button = MessageBoxButtons.OK;
+                    MessageBoxIcon Icon = MessageBoxIcon.Warning;
+                    CaixaDeMensagem(Mensagem, Caption, Button, Icon);
+                    CenterMap();
+                }
+            }
+        }
+
+        public void RenderMap(Color CorMapaInteiro, Color CorSelecaoItem, Color CorBordaNaoSelecionada)
+        {
             
-            sf.RenderSettings.FillColor = CorMapaInicial; // aqui eu seto a cor do mapa inteiro
+            sf = this.sfMap1[0];
+            sf.RenderSettings.FillColor = CorMapaInteiro;
+            //sf.RenderSettings.FillColor = CorMapaInicial; // aqui eu seto a cor do mapa inteiro
             sf.RenderSettings.Font = font1; // aqui eu defino a fonte a ser usada no mapa
-            sf.RenderSettings.SelectFillColor = CorVerdeDiferente; // aqui eu defino a cor que vai ficar a regiao do mapa que fi clicada no getrecord
-            sf.RenderSettings.OutlineColor = CorBranca; // define a cor das bordas nao selecionadas
+            sf.RenderSettings.SelectFillColor = CorSelecaoItem;
+            //sf.RenderSettings.SelectFillColor = CorVerdeDiferente; // aqui eu defino a cor que vai ficar a regiao do mapa que fi clicada no getrecord
+            sf.RenderSettings.OutlineColor = CorBordaNaoSelecionada;
+            //sf.RenderSettings.OutlineColor = CorBranca; // define a cor das bordas nao selecionadas
             sf.RenderSettings.SelectOutlineColor = CorAzul; // aqui eu defino a cor do mapa quando selecionado // aqui eu defino a cor das bordas
             sf.RenderSettings.FieldName = sf.RenderSettings.DbfReader.GetFieldNames()[1]; // selecionando 1 eu pego todos os nomes das UFs
             RefreshMap();
-        }
-
-
-        private void btnTresPontosClick(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                txtNomeArquivo.Text = ofd.FileName; // printa o nome do arquivo selecionado
-            }
-
         }
 
         private void ImgPastaFechadaClick(object sender, EventArgs e)
@@ -200,17 +255,41 @@ namespace APIFATECForms
 
         private void BaseDeDadosClick(object sender, EventArgs e)
         {
-            ImgPastaFechadaClick(sender, e);
-            LabelBaseDeDados.BorderStyle = BorderStyle.Fixed3D; ;
-            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
-            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoSul.BorderStyle = BorderStyle.None;
-            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
+            {
+                ImgPastaFechadaClick(sender, e);
+                LabelBaseDeDados.BorderStyle = BorderStyle.Fixed3D; ;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
 
-            sf.ClearSelectedRecords();
-            RefreshMap();
+                sf.ClearSelectedRecords();
+                RefreshMap();
+            }
+            else
+            {
+                gifImage = new Simulacao(filePath);
+                gifImage.ReverseAtEnd = false; //dont reverse at end
+                                               //pictureBox3.BackColor = Color.Transparent;
+                pictureBox3.Visible = true;
+                pictureBox3.Image = gifImage.GetNextFrame();
 
+                RenderMap(CorMapaInicial, CorVerdeDiferente, CorBranca);
+                OpenShapefile(pastaPrimeiraRenderizacao);
+                ImgPastaFechadaClick(sender, e);
+                LabelBaseDeDados.BorderStyle = BorderStyle.Fixed3D; ;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+                sf.ClearSelectedRecords();
+                RefreshMap();
+            }
         }
 
         private void txtArquivoPExtrairKeyDown(object sender, KeyEventArgs e)
@@ -230,10 +309,32 @@ namespace APIFATECForms
 
                 if (ofd.ShowDialog(this) == DialogResult.OK)
                 {
-                    foreach (String arquivo in ofd.FileNames)
-                    {
-                        ShapeFileZipado = txtNomeArquivo.Text += arquivo;
-                    }
+                    // Primeiro eu tenho que saber o codigo IBGE de cada cidade
+                    // feito isso salvar todos os codigos, dividos por estados regiões.
+                    // Já salvo todos os códigos no banco, quando o usuário digitar algo 
+                    // na text box txtArquivoPExtrair  e dar enter, a aplicação deve buscar 
+                    // a qual estado pertence aquela cidade e ai extrai o arquivo referente 
+                    // a mesma dentro do pasta referente ao seu estado criando uma pasta. 
+                    // Essa nova pasta criada é uma pasta referente a cidade que o usuário acabou de baixar
+                    // no arquivo shapefile.
+                    // Entao, quando baixa buscamos pelo arquivo, batemos o codigo no banco de dados, quando bate lá ja entra
+                    // na cidade certa, e também bate o código nas pastas da aplicação e entra na pasta certa
+
+                    // A ideia é pegar o codigo IBGE, bater no banco e criar uma nova pasta na palicacao referente ao estado especifico.
+
+                    //string ArquivoShapeFileBuscado = ofd.;
+                    ShapeFileZipado = ofd.FileName;
+                    char separacao = '\\';
+                    string [] DadosArquivo = ShapeFileZipado.Split(separacao);
+                    string DadoImportante = DadosArquivo[4];
+                    char separacao2 = '_';
+                    string[] DadoCodigoIBGE = DadoImportante.Split(separacao2);
+                    string DadoImportante2 = DadoCodigoIBGE[1];
+                    string[] CodigoIBGECExtensao = DadoImportante2.Split('.');
+                    string CodigoIBGE = CodigoIBGECExtensao[0]; // aqui eu consigo o codigo do ibge que tanto queria caralhooooo
+                    int CODIGOIBGE = int.Parse(CodigoIBGE);
+
+                    BRASIL_MUNICIPIO BuscaCodigoIBGE = db.BRASIL_MUNICIPIO.Where(busca => busca.cd_mun == CODIGOIBGE).FirstOrDefault(); //
 
                     try
                     {
@@ -263,9 +364,8 @@ namespace APIFATECForms
                 }
                 else
                 {
-                    //CaixaDeMensagem();
-                }
 
+                }
             }
         }
 
@@ -304,207 +404,280 @@ namespace APIFATECForms
 
         private void btnBuscarClick(object sender, EventArgs e)
         {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.CheckFileExists = true;
+            ofd.CheckPathExists = true;
+            ofd.RestoreDirectory = true;
+            ofd.FileName = txtArquivoPExtrair.Text.Trim().ToUpper();
 
-        }
-
-        private void sfMap1_MouseClick(object sender, MouseEventArgs e)
-        {
-            // como o proprio nome ja diz, essa funcao é executada assim que eu dou um click em algum lugar do mapa
-            // essa funcao e responsavel por pegar todas as informaçoes do local que ela clicou
-
-            if (sfMap1.ShapeFileCount == 0) return;
-
-            int recordIndex = sfMap1.GetShapeIndexAtPixelCoord(0, e.Location, 8);
-            if (recordIndex >= 0)
+            if (ofd.ShowDialog(this) == DialogResult.OK)
             {
-                string[] recordAttributes = sfMap1[0].GetAttributeFieldValues(recordIndex);// pego os atributos dentro dauqle lugar que foi clicado
-                string[] attributeNames = sfMap1[0].GetAttributeFieldNames();
-                StringBuilder sb = new StringBuilder();
-                for (int n = 0; n < attributeNames.Length; ++n)
+                try
                 {
-                    sb.Append(attributeNames[n]).Append(':' + " ").AppendLine(recordAttributes[n].Trim());
-                }
-                MessageBox.Show(this, sb.ToString(), "Atributos da seleção", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
-            }
-        }
+                    gifImage = new Simulacao(filePath);
+                    gifImage.ReverseAtEnd = false; //dont reverse at end
+                                                   //pictureBox3.BackColor = Color.Transparent;
+                    pictureBox3.Visible = true;
+                    pictureBox3.Image = gifImage.GetNextFrame();
 
+                    OpenShapefile(ofd.FileName); // aqui ele tenta abrir o shape file que eu selecionei, verificando seu nome
+                                                 // por exemplo: "C:\\Users\\Agostin\\Desktop\\APIFATECForms\\BasePath\\AREA_IMOVEL\\AREA_IMOVEL.shp"
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Error : " + ex.Message);
+                }
+            }
+
+        }
 
         private void RegiaoNorte_Click(object sender, EventArgs e)
         {
-            sf.ClearSelectedRecords();
+            string VerificaPastaDoShape = sf.FilePath + ".shp";
 
-            LabelBaseDeDados.BorderStyle = BorderStyle.None;
-            LabelRegiaoNorte.BorderStyle = BorderStyle.Fixed3D;
-            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoSul.BorderStyle = BorderStyle.None;
-            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
-
-            List<int> RegiaoNorte = new List<int>();
-
-            foreach (var uf in ListaRegiaoNorte)
+            if (VerificaPastaDoShape == pastaPrimeiraRenderizacao)
             {
-                if (uf.nm_regiao == "Norte")
+                sf.ClearSelectedRecords();
+
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+                List<int> RegiaoNorte = new List<int>();
+
+                foreach (var uf in ListaRegiaoNorte)
                 {
-                    RegiaoNorte.Add(uf.cd_uf);
+                    if (uf.nm_regiao == "Norte")
+                    {
+                        RegiaoNorte.Add(uf.cd_uf);
+                    }
                 }
+
+                foreach (var item in RegiaoNorte)
+                {
+                    if (item == 11)
+                    {
+                        int primeiro = item - 11;
+                        sf.SelectRecord(primeiro, true);
+                    }
+                    int i = item - 10;
+
+                    sf.SelectRecord(i, true);
+                }
+
+                RefreshMap();
             }
 
-            foreach (var item in RegiaoNorte)
+            else
             {
-                if (item == 11)
-                {
-                    int primeiro = item - 11;
-                    sf.SelectRecord(primeiro, true);
-                }
-                int i = item - 10;
-
-                sf.SelectRecord(i, true);
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
             }
-
-            RefreshMap();
 
         }
 
         private void RegiaoNordeste_Click(object sender, EventArgs e)
         {
-            sf.ClearSelectedRecords();
-
-            LabelBaseDeDados.BorderStyle = BorderStyle.None;
-            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
-            LabelRegiaoNordeste.BorderStyle = BorderStyle.Fixed3D;
-            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoSul.BorderStyle = BorderStyle.None;
-            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
-
-            List<int> RegiaoNordeste = new List<int>();
-
-            foreach (var uf in ListaRegiaoNordeste)
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
             {
-                if (uf.nm_regiao == "Nordeste")
+                sf.ClearSelectedRecords();
+
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+                List<int> RegiaoNordeste = new List<int>();
+
+                foreach (var uf in ListaRegiaoNordeste)
                 {
-                    RegiaoNordeste.Add(uf.cd_uf);
+                    if (uf.nm_regiao == "Nordeste")
+                    {
+                        RegiaoNordeste.Add(uf.cd_uf);
+                    }
                 }
+
+                foreach (var item in RegiaoNordeste)
+                {
+
+                    int i = item - 14;
+
+                    sf.SelectRecord(i, true);
+                }
+
+                RefreshMap();
             }
 
-            foreach (var item in RegiaoNordeste)
+            else
             {
-
-                int i = item - 14;
-
-                sf.SelectRecord(i, true);
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
             }
-
-            RefreshMap();
 
         }
 
         private void RegiaoCentroOeste_Click(object sender, EventArgs e)
         {
-            sf.ClearSelectedRecords();
-
-            LabelBaseDeDados.BorderStyle = BorderStyle.None;
-            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
-            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.Fixed3D;
-            LabelRegiaoSul.BorderStyle = BorderStyle.None;
-            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
-
-            List<int> RegiaoCentroOeste = new List<int>();
-
-            foreach (var uf in ListaRegiaoCentroOeste)
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
             {
-                if (uf.nm_regiao == "Centro-oeste")
+                sf.ClearSelectedRecords();
+
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+                List<int> RegiaoCentroOeste = new List<int>();
+
+                foreach (var uf in ListaRegiaoCentroOeste)
                 {
-                    RegiaoCentroOeste.Add(uf.cd_uf);
+                    if (uf.nm_regiao == "Centro-oeste")
+                    {
+                        RegiaoCentroOeste.Add(uf.cd_uf);
+                    }
                 }
+
+                foreach (var item in RegiaoCentroOeste)
+                {
+                    int i = item - 27;
+
+                    sf.SelectRecord(i, true);
+                }
+
+                RefreshMap();
             }
 
-            foreach (var item in RegiaoCentroOeste)
+            else
             {
-                int i = item - 27;
-
-                sf.SelectRecord(i, true);
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
             }
-
-            RefreshMap();
 
         }
 
         private void RegiaoSudeste_Click(object sender, EventArgs e)
         {
-            sf.ClearSelectedRecords();
-
-            LabelBaseDeDados.BorderStyle = BorderStyle.None;
-            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
-            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoSul.BorderStyle = BorderStyle.None;
-            LabelRegiaoSudeste.BorderStyle = BorderStyle.Fixed3D;
-
-            List<int> RegiaoSudeste = new List<int>();
-
-            foreach (var uf in ListaRegiaoSudeste)
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
             {
-                if (uf.nm_regiao == "Sudeste")
+                sf.ClearSelectedRecords();
+
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.Fixed3D;
+
+                List<int> RegiaoSudeste = new List<int>();
+
+                foreach (var uf in ListaRegiaoSudeste)
                 {
-                    RegiaoSudeste.Add(uf.cd_uf);
+                    if (uf.nm_regiao == "Sudeste")
+                    {
+                        RegiaoSudeste.Add(uf.cd_uf);
+                    }
                 }
+
+                foreach (var item in RegiaoSudeste)
+                {
+                    if (item == 35)
+                    {
+                        int ii = item - 16;
+                        sf.SelectRecord(ii, true);
+                    }
+
+                    int i = item - 15;
+                    if (i < 20)
+                    {
+                        sf.SelectRecord(i, true);
+                    }
+                }
+
+                RefreshMap();
             }
 
-            foreach (var item in RegiaoSudeste)
+            else
             {
-                if (item == 35)
-                {
-                    int ii = item - 16;
-                    sf.SelectRecord(ii, true);
-                }
-
-                int i = item - 15;
-                if (i < 20)
-                {
-                    sf.SelectRecord(i, true);
-                }
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.None;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.Fixed3D;
             }
-
-            RefreshMap();
 
         }
 
         private void LabelRegiaoSul_Click(object sender, EventArgs e)
         {
-            sf.ClearSelectedRecords();
-
-            LabelBaseDeDados.BorderStyle = BorderStyle.None;
-            LabelRegiaoNorte.BorderStyle = BorderStyle.None;
-            LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
-            LabelRegiaoSul.BorderStyle = BorderStyle.Fixed3D;
-            LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
-
-            List<int> RegiaoSul = new List<int>();
-
-            foreach (var uf in ListaRegiaoSul)
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
             {
-                if (uf.nm_regiao == "Sul")
+                sf.ClearSelectedRecords();
+
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
+
+                List<int> RegiaoSul = new List<int>();
+
+                foreach (var uf in ListaRegiaoSul)
                 {
-                    RegiaoSul.Add(uf.cd_uf);
+                    if (uf.nm_regiao == "Sul")
+                    {
+                        RegiaoSul.Add(uf.cd_uf);
+                    }
                 }
+
+                foreach (var item in RegiaoSul)
+                {
+                    int i = item - 21;
+                    sf.SelectRecord(i, true);
+                }
+                RefreshMap();
             }
 
-            foreach (var item in RegiaoSul)
+            else
             {
-                int i = item - 21;
-                sf.SelectRecord(i, true);
+                LabelBaseDeDados.BorderStyle = BorderStyle.None;
+                LabelRegiaoNorte.BorderStyle = BorderStyle.None;
+                LabelRegiaoNordeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoCentroOeste.BorderStyle = BorderStyle.None;
+                LabelRegiaoSul.BorderStyle = BorderStyle.Fixed3D;
+                LabelRegiaoSudeste.BorderStyle = BorderStyle.None;
             }
 
-            RefreshMap();
 
         }
 
         private void Form1_Click(object sender, EventArgs e)
         {
-            LabelBaseDeDados.BorderStyle = BorderStyle.None;    
+            LabelBaseDeDados.BorderStyle = BorderStyle.None;
         }
 
         private void ImgCenter_MouseEnter(object sender, EventArgs e)
@@ -533,6 +706,146 @@ namespace APIFATECForms
             ToolTip toolTip1 = new ToolTip();
             toolTip1.ShowAlways = true;
             toolTip1.SetToolTip(ImgZoomOut, "Menos zoom");
+        }
+
+        private void ImgZoomIn_Click(object sender, EventArgs e)
+        {
+            MaisZoom();
+        }
+
+        private void ImgZoomOut_Click(object sender, EventArgs e)
+        {
+            MenosZoom(2.5);
+        }
+
+        private void sfMap1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+           
+            string PastaDoShape = sf.FilePath + ".shp";
+            if (PastaDoShape == pastaPrimeiraRenderizacao)
+            {
+                string Mensagem = "Deseja visualizar as cidades desse estado?";
+                string Caption = "";
+                MessageBoxButtons Button = MessageBoxButtons.YesNoCancel;
+                MessageBoxIcon Icon = MessageBoxIcon.Question;
+
+                int recordIndex = sfMap1.GetShapeIndexAtPixelCoord(0, e.Location, 8);
+                if (recordIndex >= 0)
+                {
+                    string[] recordAttributes = sfMap1[0].GetAttributeFieldValues(recordIndex);// pego os atributos dentro dauqle lugar que foi clicado
+                    //MenosZoom(5);
+                    CaixaDeMensagem(Mensagem, Caption, Button, Icon);
+                    MenosZoom(5);
+
+                    if (result == DialogResult.Yes)
+                    {
+                        RenderMap(CorVerdeDiferente, CorVerdeDiferente, CorBranca);
+
+                        List<string> SiglasUF = new List<string>();
+
+                        foreach (var uf in ListaBrasil)
+                        {
+                            if (uf.sigla_uf == uf.sigla_uf)
+                            {
+                                SiglasUF.Add(uf.sigla_uf);
+                            }
+                        }
+
+                        foreach (var item in SiglasUF)
+                        {
+                            if (item == recordAttributes[2])
+                            {
+                                System.IO.DirectoryInfo di = new DirectoryInfo(BasePath);
+
+                                foreach (var file in di.GetDirectories())
+                                {
+                                    string Diretorio = file.ToString();
+                                    if (Diretorio == item)
+                                    {
+                                        string PastaBuscada = BasePath + @"\" + Diretorio;
+                                        Acrescimo = PastaBuscada + @"\" + Diretorio + "_Municipios_2020.shp";
+
+                                        // entrar na pasta e localizar o arquivo shape
+                                        string PastadoShape = sf.FilePath + ".shp";
+                                        if (PastadoShape == Acrescimo)
+                                        {
+                                        }
+                                        else
+                                        {
+                                            gifImage = new Simulacao(filePath);
+                                            gifImage.ReverseAtEnd = false; //dont reverse at end
+                                                                           //pictureBox3.BackColor = Color.Transparent;
+                                            pictureBox3.Visible = true;
+                                            pictureBox3.Image = gifImage.GetNextFrame();
+
+                                            OpenShapefile(Acrescimo);
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }
+
+                        sf.RenderSettings.SelectFillColor = CorMapaInicial;
+                        sf.RenderSettings.OutlineColor = CorBranca;
+                        //sf.RenderSettings.SelectOutlineColor = CorBranca;
+                        RefreshMap();
+                    }
+                }
+            }
+
+            else if (Acrescimo == Acrescimo)
+            {
+                int recordIndex = sfMap1.GetShapeIndexAtPixelCoord(0, e.Location, 8);
+                if (recordIndex >= 0)
+                {
+                    string[] recordAttributes = sfMap1[0].GetAttributeFieldValues(recordIndex);// pego os atributos dentro dauqle lugar que foi clicado
+                    string[] attributeNames = sfMap1[0].GetAttributeFieldNames();
+                    StringBuilder sb = new StringBuilder();
+                    for (int n = 0; n < attributeNames.Length; ++n)
+                    {
+                        sb.Append(attributeNames[n]).Append(':' + " ").AppendLine(recordAttributes[n].Trim());
+                    }
+                    MessageBox.Show(this, sb.ToString(), "Atributos da seleção", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
+
+                    // Quando os atributos do record que eu escolhi ele devolve o codigo IBGE da cidade, por exemplo... quando clicamos na cidade de Guararema 
+                    // no estado de São Paulo, em um dos atributos daquela seleção vai ser o codigo IBGE de Guararema, que é 3518305, esse valor remete aos shapefile
+                    // que a visiona quer que trabalhemos.
+
+                    // Acrescentar uma funcionalidade que busque um municipio pelo nome digitado
+
+                    // Lembrar de arrumar o center map e o zoom em todos os shapefile
+
+                }
+            }
+
+        }
+
+        private void LabelBaseDeDados_MouseLeave(object sender, EventArgs e)
+        {
+            pictureBox3.Visible = false;
+        }
+
+        private void sfMap1_MouseEnter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_MouseMove(object sender, MouseEventArgs e)
+        {
+
+            if (Segundos > DateTime.Now.Second)
+            {
+                pictureBox3.Visible = false;
+            }
+
+            Segundos++;
+
+            if (Segundos == 60)
+            {
+                Segundos = 0;
+            }
         }
     }
 }

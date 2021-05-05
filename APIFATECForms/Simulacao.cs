@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace APIFATECForms
@@ -16,6 +15,13 @@ namespace APIFATECForms
         private const int MOUSEEVENTF_LEFTUP = 0x04;
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
+
+        private Image gifImage;
+        private FrameDimension dimension;
+        private int frameCount;
+        private int currentFrame = -1;
+        private bool reverse;
+        private int step = 1;
 
         [System.Runtime.InteropServices.DllImport("user32.dll")] // simulacao do cursor do mouse para renderizar o mapa
         static extern bool SetCursorPos(int x, int y);
@@ -57,5 +63,55 @@ namespace APIFATECForms
                 catch { }
             }
         }
+
+        public Simulacao(string path)
+        {
+            gifImage = Image.FromFile(path);
+            //initialize
+            dimension = new FrameDimension(gifImage.FrameDimensionsList[0]);
+            //gets the GUID
+            //total frames in the animation
+            frameCount = gifImage.GetFrameCount(dimension);
+        }
+
+        public Image GetNextFrame()
+        {
+
+            currentFrame += step;
+
+            //if the animation reaches a boundary...
+            if (currentFrame >= frameCount || currentFrame < 0)
+            {
+                if (reverse)
+                {
+                    step *= -1;
+                    //...reverse the count
+                    //apply it
+                    currentFrame += step;
+                }
+                else
+                {
+                    currentFrame = 0;
+                    //...or start over
+                }
+            }
+            return GetFrame(currentFrame);
+        }
+
+        public Image GetFrame(int index)
+        {
+            gifImage.SelectActiveFrame(dimension, index);
+            //find the frame
+            return (Image)gifImage.Clone();
+            //return a copy of it
+        }
+
+        public bool ReverseAtEnd
+        {
+            //whether the gif should play backwards when it reaches the end
+            get { return reverse; }
+            set { reverse = value; }
+        }
+
     }
 }
