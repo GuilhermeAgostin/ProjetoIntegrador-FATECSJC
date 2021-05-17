@@ -36,6 +36,42 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotSpatial.Controls, Version=1.9.0.0, Culture=neutral, PublicKeyToken=4d9e49339a7d240c, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Controls.1.9\lib\net40-Client\DotSpatial.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Data, Version=1.9.0.0, Culture=neutral, PublicKeyToken=c29dbf30e059ca9d, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Data.1.9\lib\net40-Client\DotSpatial.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Data.Forms, Version=1.7.0.0, Culture=neutral, PublicKeyToken=53ab5a198378d4c1, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Data.Forms.1.7\lib\net40-Client\DotSpatial.Data.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Extensions, Version=1.9.0.0, Culture=neutral, PublicKeyToken=4d9e49339a7d240c, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Extensions.1.9\lib\net40-Client\DotSpatial.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Modeling.Forms, Version=0.11.9.6, Culture=neutral, PublicKeyToken=712bef29a31a9354, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Modeling.Forms.1.0.0.0\lib\net40-Client\DotSpatial.Modeling.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Mono, Version=1.5.0.0, Culture=neutral, PublicKeyToken=425ba4de41127026, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Mono.1.5.1\lib\net40\DotSpatial.Mono.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Projections, Version=1.9.0.0, Culture=neutral, PublicKeyToken=272632bddd08a38b, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Projections.1.9\lib\net40-Client\DotSpatial.Projections.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Projections.Forms, Version=1.7.0.0, Culture=neutral, PublicKeyToken=52099474f11b7ff0, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Projections.Forms.1.7\lib\net40-Client\DotSpatial.Projections.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Serialization, Version=1.9.0.0, Culture=neutral, PublicKeyToken=441f200f827611e7, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Serialization.1.9\lib\net40-Client\DotSpatial.Serialization.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Symbology, Version=1.9.0.0, Culture=neutral, PublicKeyToken=6178c08da7998387, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Symbology.1.9\lib\net40-Client\DotSpatial.Symbology.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Symbology.Forms, Version=0.11.9.6, Culture=neutral, PublicKeyToken=0544cdeefb662382, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Symbology.Forms.1.0.0.0\lib\net40\DotSpatial.Symbology.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="DotSpatial.Topology, Version=1.9.0.0, Culture=neutral, PublicKeyToken=a66b5e9434ca3671, processorArchitecture=MSIL">
+      <HintPath>packages\DotSpatial.Topology.1.9\lib\net40-Client\DotSpatial.Topology.dll</HintPath>
+    </Reference>
     <Reference Include="EGIS.Controls">
       <HintPath>egis_dt_4_6_6\EGIS.Controls.dll</HintPath>
     </Reference>
@@ -51,10 +87,22 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="GeoAPI, Version=1.7.5.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
+      <HintPath>packages\GeoAPI.Core.1.7.5\lib\net45\GeoAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="GeoAPI.CoordinateSystems, Version=1.7.5.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
+      <HintPath>packages\GeoAPI.CoordinateSystems.1.7.5\lib\net45\GeoAPI.CoordinateSystems.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>True</EmbedInteropTypes>
       <HintPath>..\..\..\..\..\..\Windows\assembly\GAC_MSIL\Microsoft.Office.Interop.Excel\15.0.0.0__71e9bce111e9429c\Microsoft.Office.Interop.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.SqlServer.Types, Version=14.0.0.0, Culture=neutral, PublicKeyToken=89845dcd8080cc91, processorArchitecture=MSIL">
+      <HintPath>packages\Microsoft.SqlServer.Types.14.0.1016.290\lib\net40\Microsoft.SqlServer.Types.dll</HintPath>
+    </Reference>
+    <Reference Include="NetTopologySuite.CoordinateSystems, Version=1.15.3.0, Culture=neutral, PublicKeyToken=f580a05016ebada1, processorArchitecture=MSIL">
+      <HintPath>packages\NetTopologySuite.CoordinateSystems.1.15.3\lib\net45\NetTopologySuite.CoordinateSystems.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -117,6 +165,15 @@
     <Compile Include="ConexaoDados.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Conversion\ConvertToGeometry.cs" />
+    <Compile Include="Conversion\ConvertToSqlGeometry.cs" />
+    <Compile Include="Conversion\Shape2Sql.cs" />
+    <Compile Include="Conversion\Sql2Shape.cs" />
+    <Compile Include="Dbf\DbfColumn.cs" />
+    <Compile Include="Dbf\DbfColumnType.cs" />
+    <Compile Include="Dbf\DbfFile.cs" />
+    <Compile Include="Dbf\DbfHeader.cs" />
+    <Compile Include="Dbf\DbfRecord.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -125,7 +182,18 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shape\BigEndianExtensions.cs" />
+    <Compile Include="Shape\ShapefileBlockReader.cs" />
+    <Compile Include="Shape\ShapefileDataReader.cs" />
+    <Compile Include="Shape\ShapefileDataWriter.cs" />
+    <Compile Include="Shape\ShapefileGeometryType.cs" />
+    <Compile Include="Shape\ShapefileHeader.cs" />
+    <Compile Include="Shape\ShapefileIndexReader.cs" />
+    <Compile Include="Shape\ShapefileReader.cs" />
+    <Compile Include="Shape\ShapefileWriter.cs" />
     <Compile Include="Simulacao.cs" />
+    <Compile Include="SqlServerTypes\Loader.cs" />
+    <Compile Include="Transform\GeometryTransform.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -163,6 +231,19 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\JavaPastryLogo2-removebg-preview-Redimensionada.png" />
+    <Content Include="SqlServerTypes\readme.htm" />
+    <Content Include="SqlServerTypes\x64\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x64\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\msvcr120.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SqlServerTypes\x86\SqlServerSpatial140.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="Resources\Focus.png" />
     <None Include="Resources\rosa-dos-ventos-logo-B9D019B256-seeklogo.com %281%29.png" />
     <None Include="BasePath\ImgPastaFechada-removebg-preview-redimensionada.png" />
@@ -206,6 +287,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

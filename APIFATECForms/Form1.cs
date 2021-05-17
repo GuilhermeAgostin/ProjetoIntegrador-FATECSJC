@@ -18,6 +18,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Timer = System.Threading.Timer;
+using System.Collections.Generic;
+using DotSpatial.Controls;
+using DotSpatial.Controls.Docking;
+using APIFATECForms.Conversion;
+using APIFATECForms.Dbf;
+using APIFATECForms.Shape;
+using APIFATECForms.Transform;
 
 namespace APIFATECForms
 {
@@ -33,7 +40,7 @@ namespace APIFATECForms
         //static string dbfFileName = BasePath + @"\SHAPEFILE_BRASIL\BR_UF_2020.dbf";
         static string dbfFileName = BasePath + @"\BR_MUNICIPIOS_2020\BR_MUNICIPIOS_2020.dbf";
         public static string constr = "Provider = VFPOLEDB.1; Data Source =" + Directory.GetParent(dbfFileName).FullName;
-        static string pastaPrimeiraRenderizacao = BasePath + @"\SHAPEFILE_BRASIL\BR_UF_2020.shp";
+        string pastaPrimeiraRenderizacao = BasePath + @"\SHAPEFILE_BRASIL\BR_UF_2020.shp";
         //static string pastaPrimeiraRenderizacaoBrasilMunicipios = BasePath + @"\BR_MUNICIPIOS_2020\BR_MUNICIPIOS_2020.shp";
        
 
@@ -52,7 +59,7 @@ namespace APIFATECForms
         int Segundos = 0;
         string Acrescimo = "";
 
-       DialogResult result;
+        DialogResult result;
 
         int ContagemClickImgPasta = 0;
         int ClickTxtArquivoPExtrair = 0;
@@ -87,6 +94,32 @@ namespace APIFATECForms
             pictureBox3.Image = gifImage.GetNextFrame();
 
             OpenShapefile(pastaPrimeiraRenderizacao);
+
+            ConexaoDados c = new ConexaoDados();
+            string NomeNovaTabela = "TabelaTeste";
+            //c.CriarTabela(NomeNovaTabela);
+
+            try
+            {
+                Conversion.Shape2Sql shape2Sql = new Shape2Sql();
+
+                string ConexaoBancoDeDados = @"connection string=&quot;data source=LAPTOP-VIKB9V8G\SQLEXPRESS;initial catalog=APIFATEC;integrated security=True;";
+
+
+                string NovapastaPrimeiraRenderizacao = BasePath + @"\SHAPEFILE_BRASIL\BR_UF_2020.shp";
+
+
+                shape2Sql.Convert(NovapastaPrimeiraRenderizacao, ConexaoBancoDeDados, "Teste");
+
+            }
+            catch(Exception ex)
+            {
+
+            }
+           
+
+
+
         }
 
         /*
@@ -335,6 +368,10 @@ namespace APIFATECForms
                     int CODIGOIBGE = int.Parse(CodigoIBGE);
 
                     BRASIL_MUNICIPIO BuscaCodigoIBGE = db.BRASIL_MUNICIPIO.Where(busca => busca.cd_mun == CODIGOIBGE).FirstOrDefault(); //
+
+                   
+
+
 
                     try
                     {
